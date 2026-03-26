@@ -1,0 +1,12 @@
+{
+    "servers": {
+        "encore-mcp": {
+            "args": [
+                "mcp",
+                "run",
+                "--app=95i44"
+            ],
+            "command": "encore"
+        }
+    }
+}
