@@ -19,6 +19,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import ListItemText from "@mui/material/ListItemText";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 interface TimeDisplayProps {
 	time: number;
@@ -222,6 +223,10 @@ export function beep(
 }
 
 export default function Timer() {
+	const navigate = useNavigate();
+	const { menu = false } = useSearch({
+		from: "__root__",
+	}) as { menu: boolean };
 	const { isConnected, timer } = useTimer();
 	const [displayTime, setDisplayTime] = useState(0);
 	const [timings, setTimings] = useState<number[]>([]);
@@ -234,7 +239,6 @@ export default function Timer() {
 		break: true,
 	});
 	const [recivedData, setRecivedData] = useState(false);
-	const [menuOpen, setMenuOpen] = useState(false);
 
 	useEffect(() => {
 		addEventListener(TimerEvent.Hit, OnHit);
@@ -344,7 +348,13 @@ export default function Timer() {
 
 	//TODO: Implement menu
 	const OnMenu = () => {
-		setMenuOpen(true);
+		navigate({
+			to: ".",
+			ignoreBlocker: true,
+			search: {
+				menu: true,
+			},
+		});
 	};
 
 	const OnBreak = () => {
@@ -354,8 +364,13 @@ export default function Timer() {
 	return (
 		<>
 			<TimerMenuDialog
-				open={menuOpen}
-				onClose={() => setMenuOpen(false)}
+				open={menu}
+				onClose={() => {
+					navigate({
+						to: ".",
+						ignoreBlocker: true,
+					});
+				}}
 			/>
 			<Grid container spacing={2}>
 				<StyledGridItem size={{ xs: 12, md: 6 }}>
