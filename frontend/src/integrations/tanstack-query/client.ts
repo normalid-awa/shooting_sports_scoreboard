@@ -32,6 +32,7 @@ const BROWSER = typeof globalThis === "object" && ("window" in globalThis);
  * Client is an API client for the 95i44 Encore application.
  */
 export default class Client {
+    public readonly hello: hello.ServiceClient
     private readonly options: ClientOptions
     private readonly target: string
 
@@ -46,6 +47,7 @@ export default class Client {
         this.target = target
         this.options = options ?? {}
         const base = new BaseClient(this.target, this.options)
+        this.hello = new hello.ServiceClient(base)
     }
 
     /**
@@ -74,6 +76,28 @@ export interface ClientOptions {
 
     /** Default RequestInit to be used for the client */
     requestInit?: Omit<RequestInit, "headers"> & { headers?: Record<string, string> }
+}
+
+export namespace hello {
+
+    export class ServiceClient {
+        private baseClient: BaseClient
+
+        constructor(baseClient: BaseClient) {
+            this.baseClient = baseClient
+            this.hello = this.hello.bind(this)
+        }
+
+        public async hello(): Promise<{
+    msg: string
+}> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI("GET", `/hello`)
+            return await resp.json() as {
+    msg: string
+}
+        }
+    }
 }
 
 
