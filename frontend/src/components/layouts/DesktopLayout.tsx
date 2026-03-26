@@ -44,7 +44,7 @@ export default function DesktopLayout(props: LayoutProps) {
 					flexDirection: "column",
 				}}
 			>
-				<AppBar position="static">
+				<AppBar position="sticky" sx={{ top: 0 }}>
 					<Toolbar>
 						<IconButton
 							size="large"
