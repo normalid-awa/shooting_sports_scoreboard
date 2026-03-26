@@ -3,7 +3,7 @@ import { devtools } from "@tanstack/devtools-vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-
+import basicSsl from "@vitejs/plugin-basic-ssl";
 import viteReact from "@vitejs/plugin-react";
 
 const config = defineConfig({
@@ -13,6 +13,7 @@ const config = defineConfig({
 		tsconfigPaths({ projects: ["./tsconfig.json"] }),
 		tanstackStart(),
 		viteReact(),
+		basicSsl(),
 	],
 });
 

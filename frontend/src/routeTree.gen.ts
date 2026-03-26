@@ -9,12 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ARouteImport } from './routes/a'
+import { Route as TimerRouteImport } from './routes/timer'
 import { Route as IndexRouteImport } from './routes/index'
 
-const ARoute = ARouteImport.update({
-  id: '/a',
-  path: '/a',
+const TimerRoute = TimerRouteImport.update({
+  id: '/timer',
+  path: '/timer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +25,37 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/a': typeof ARoute
+  '/timer': typeof TimerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/a': typeof ARoute
+  '/timer': typeof TimerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/a': typeof ARoute
+  '/timer': typeof TimerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/a'
+  fullPaths: '/' | '/timer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/a'
-  id: '__root__' | '/' | '/a'
+  to: '/' | '/timer'
+  id: '__root__' | '/' | '/timer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ARoute: typeof ARoute
+  TimerRoute: typeof TimerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/a': {
-      id: '/a'
-      path: '/a'
-      fullPath: '/a'
-      preLoaderRoute: typeof ARouteImport
+    '/timer': {
+      id: '/timer'
+      path: '/timer'
+      fullPath: '/timer'
+      preLoaderRoute: typeof TimerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,7 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ARoute: ARoute,
+  TimerRoute: TimerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

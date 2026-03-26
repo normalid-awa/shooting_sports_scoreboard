@@ -5,6 +5,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { linkOptions } from "@tanstack/react-router";
 import HomeIcon from "@mui/icons-material/Home";
+import TimerIcon from "@mui/icons-material/Timer";
 
 const links = linkOptions([
 	{
@@ -12,9 +13,14 @@ const links = linkOptions([
 		label: "Home",
 		icon: <HomeIcon />,
 	},
+	{
+		to: "/timer",
+		label: "Timer",
+		icon: <TimerIcon />,
+	},
 ]);
 
-export default function NavList() {
+export default function NavList(props: { onNav?: () => void }) {
 	return (
 		<List component="nav" sx={{ width: 200 }}>
 			{links.map((link) => (
@@ -30,6 +36,7 @@ export default function NavList() {
 								theme.vars?.palette.Switch.infoDisabledColor,
 						},
 					}}
+					onClick={() => props.onNav?.()}
 					viewTransition
 				>
 					<ListItemIcon>{link.icon}</ListItemIcon>

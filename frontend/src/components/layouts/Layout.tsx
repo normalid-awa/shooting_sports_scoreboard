@@ -13,19 +13,19 @@ export interface LayoutProps {
 export default function Layout({ children }: { children: React.ReactNode }) {
 	const theme = useTheme();
 	const useMobileLayout = useMediaQuery(theme.breakpoints.down("sm"));
-	const [fold, setFold] = useState(false);
+	const [fold, setFold] = useState(!useMobileLayout);
 
-	if (useMobileLayout) {
-		return (
-			<MobileLayout fold={fold} setFold={setFold}>
-				{children}
-			</MobileLayout>
-		);
-	} else {
+	if (!useMobileLayout) {
 		return (
 			<DesktopLayout fold={fold} setFold={setFold}>
 				{children}
 			</DesktopLayout>
+		);
+	} else {
+		return (
+			<MobileLayout fold={fold} setFold={setFold}>
+				{children}
+			</MobileLayout>
 		);
 	}
 }

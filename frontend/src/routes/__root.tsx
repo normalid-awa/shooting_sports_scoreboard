@@ -20,6 +20,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import CssBaseline from "@mui/material/CssBaseline";
 import Layout from "#/components/layouts/Layout";
+import { TimerProvider } from "#/providers/timer/TimerProvider";
 
 const theme = createTheme({
 	colorSchemes: { light: true, dark: true },
@@ -61,7 +62,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<TanStackQueryProvider>
 					<ThemeProvider theme={theme} defaultMode="system">
 						<CssBaseline />
-						<Layout>{children}</Layout>
+						<Layout>
+							<TimerProvider>{children}</TimerProvider>
+						</Layout>
 					</ThemeProvider>
 					<TanStackDevtools
 						config={{

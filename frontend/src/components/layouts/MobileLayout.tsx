@@ -21,7 +21,7 @@ export default function MobileLayout(props: LayoutProps) {
 				onClose={() => props.setFold(true)}
 				onOpen={() => props.setFold(false)}
 			>
-				<NavList />
+				<NavList onNav={() => props.setFold(true)} />
 			</SwipeableDrawer>
 			<Paper
 				sx={{
