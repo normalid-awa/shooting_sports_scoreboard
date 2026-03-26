@@ -1,5 +1,6 @@
 import {
 	HeadContent,
+	Outlet,
 	Scripts,
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
@@ -48,10 +49,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 		],
 	}),
-	shellComponent: RootDocument,
+	component: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument() {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
@@ -63,7 +64,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<ThemeProvider theme={theme} defaultMode="system">
 						<CssBaseline />
 						<Layout>
-							<TimerProvider>{children}</TimerProvider>
+							<TimerProvider>
+								<Outlet />
+							</TimerProvider>
 						</Layout>
 					</ThemeProvider>
 					<TanStackDevtools
