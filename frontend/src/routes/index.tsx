@@ -7,11 +7,12 @@ export const Route = createFileRoute("/")({
 	head: () => ({
 		meta: [
 			{
-				title: "IPSC Scoreboard",
+				title: "Shooting Sport Scoreboard",
 			},
 			{
 				name: "og:description",
-				content: "A scoreboard for general shooting competitions.",
+				content:
+					"A scoreboard for general shooting competitions (IPSC, IDPA, USPSA, 3-Guns, Action Air, etc...).",
 			},
 		],
 	}),

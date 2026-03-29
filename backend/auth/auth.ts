@@ -1,7 +1,6 @@
 import { betterAuth } from "better-auth";
 import orm from "./database";
 import { env } from "../env";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import * as schema from "./schema";
 
@@ -14,7 +13,7 @@ export const auth = betterAuth({
 		protocol: "auto",
 	},
 	advanced: {
-		cookiePrefix: "ipsc-scoreboard",
+		cookiePrefix: "shooting-sport-scoreboard",
 		defaultCookieAttributes: {
 			sameSite: "none",
 			secure: true,

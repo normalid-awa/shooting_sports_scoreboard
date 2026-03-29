@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	const openMenu = Boolean(anchorEl);
 
 	const title = [
-		"IPSC Scoreboard",
+		"Shooting Sport Scoreboard",
 		...useMatches()
 			.filter((m) => m.staticData?.pageTitle)
 			.map((m) => m.staticData?.pageTitle),
