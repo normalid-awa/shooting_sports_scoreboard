@@ -7,7 +7,7 @@ export const Route = createFileRoute("/timer")({
 	head: () => ({
 		meta: [
 			{
-				title: "Shooting Sport Scoreboard | Timer",
+				title: "Shooting Sports Scoreboard | Timer",
 			},
 		],
 	}),

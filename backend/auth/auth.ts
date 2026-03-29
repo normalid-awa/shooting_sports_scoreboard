@@ -13,7 +13,7 @@ export const auth = betterAuth({
 		protocol: "auto",
 	},
 	advanced: {
-		cookiePrefix: "shooting-sport-scoreboard",
+		cookiePrefix: "shooting-sports-scoreboard",
 		defaultCookieAttributes: {
 			sameSite: "none",
 			secure: true,

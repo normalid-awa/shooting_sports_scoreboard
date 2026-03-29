@@ -27,12 +27,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openMenu = Boolean(anchorEl);
 
-	const title = [
-		"Shooting Sport Scoreboard",
-		...useMatches()
-			.filter((m) => m.staticData?.pageTitle)
-			.map((m) => m.staticData?.pageTitle),
-	].join(" | ");
+	const title = useMatches()
+		.filter((m) => m.staticData?.pageTitle)
+		.map((m) => m.staticData?.pageTitle)
+		.join(" | ");
 
 	const onUserCardClick: MouseEventHandler<HTMLButtonElement> = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -66,7 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 				<DesktopLayout
 					fold={fold}
 					setFold={setFold}
-					title={title}
+					title={`Shooting Sports Scoreboard | ${title}`}
 					onUserCardClick={onUserCardClick}
 				>
 					{children}
