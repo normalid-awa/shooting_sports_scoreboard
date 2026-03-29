@@ -5,6 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
 	server: {
 		BETTER_AUTH_SECRET: z.string(),
+		TRUSTED_ORIGIN: z.string(),
 	},
 
 	/**
