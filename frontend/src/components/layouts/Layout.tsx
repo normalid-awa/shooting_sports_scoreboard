@@ -1,17 +1,16 @@
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useState } from "react";
+import { useState, type MouseEventHandler } from "react";
 import MobileLayout from "./MobileLayout";
 import DesktopLayout from "./DesktopLayout";
 import { useMatches } from "@tanstack/react-router";
-import { useSession } from "#/integrations/better-auth/auth";
-import { useLoginModal } from "#/hooks/loginModalHooks";
+import UserCardMenu from "./UserCardMenu";
 
 export interface LayoutProps {
 	children: React.ReactNode;
 	fold: boolean;
 	setFold: (fold: boolean) => void;
-	onUserCardClick: () => void;
+	onUserCardClick: MouseEventHandler<HTMLButtonElement>;
 	title: string;
 }
 
@@ -25,8 +24,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	const theme = useTheme();
 	const useMobileLayout = useMediaQuery(theme.breakpoints.down("sm"));
 	const [fold, setFold] = useState(!useMobileLayout);
-	const { user } = useSession();
-	const { openLoginModal } = useLoginModal();
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const openMenu = Boolean(anchorEl);
 
 	const title = [
 		"IPSC Scoreboard",
@@ -35,35 +34,44 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 			.map((m) => m.staticData?.pageTitle),
 	].join(" | ");
 
-	function onUserCardClick() {
-		if (user) {
-			//TODO:
-		} else {
-			openLoginModal();
-		}
-	}
+	const onUserCardClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-	if (!useMobileLayout) {
-		return (
-			<DesktopLayout
-				fold={fold}
-				setFold={setFold}
-				title={title}
-				onUserCardClick={onUserCardClick}
-			>
-				{children}
-			</DesktopLayout>
-		);
-	} else {
-		return (
-			<MobileLayout
-				fold={fold}
-				setFold={setFold}
-				title={title}
-				onUserCardClick={onUserCardClick}
-			>
-				{children}
-			</MobileLayout>
-		);
-	}
+	return (
+		<>
+			<UserCardMenu
+				open={openMenu}
+				onClose={() => setAnchorEl(null)}
+				anchorEl={anchorEl}
+				anchorOrigin={{
+					vertical: "bottom",
+					horizontal: useMobileLayout ? "left" : "right",
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: useMobileLayout ? "left" : "right",
+				}}
+			/>
+			{useMobileLayout ? (
+				<MobileLayout
+					fold={fold}
+					setFold={setFold}
+					title={title}
+					onUserCardClick={onUserCardClick}
+				>
+					{children}
+				</MobileLayout>
+			) : (
+				<DesktopLayout
+					fold={fold}
+					setFold={setFold}
+					title={title}
+					onUserCardClick={onUserCardClick}
+				>
+					{children}
+				</DesktopLayout>
+			)}
+		</>
+	);
 }

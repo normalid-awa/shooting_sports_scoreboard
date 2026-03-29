@@ -58,7 +58,7 @@ export default function LoginForm(props: LoginFormProps) {
 			<FullScreenCircularProgress showLoading={showLoading} />
 			<Stack
 				component={"form"}
-				sx={{ width: 350, pt: 1 }}
+				sx={{ pt: 1 }}
 				spacing={1}
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -69,21 +69,27 @@ export default function LoginForm(props: LoginFormProps) {
 					emailLogin(email, password, rememberMe);
 				}}
 			>
-				<FormControl variant="outlined">
-					<InputLabel htmlFor="email">Email</InputLabel>
+				<FormControl variant="outlined" required>
+					<InputLabel htmlFor="login_email_field">Email</InputLabel>
 					<OutlinedInput
+						type="email"
+						id="login_email_field"
 						name="email"
-						id="email"
+						autoComplete="email"
 						placeholder="Email"
-						label="Name"
+						label="Email"
+						inputMode="email"
 					/>
 				</FormControl>
-				<FormControl variant="outlined">
-					<InputLabel htmlFor="password">Password</InputLabel>
+				<FormControl variant="outlined" required>
+					<InputLabel htmlFor="login_password_field">
+						Password
+					</InputLabel>
 					<OutlinedInput
-						name="password"
-						id="password"
 						type="password"
+						id="login_password_field"
+						name="password"
+						autoComplete="current-password"
 						placeholder="Password"
 						label="Password"
 					/>

@@ -3,8 +3,8 @@ import { createAuthClient } from "better-auth/react";
 import { createAuthHooks } from "@daveyplate/better-auth-tanstack";
 
 export const authClient = createAuthClient({
-	basePath: "/auth",
-	baseURL: env.VITE_BACKEND_ENDPOINT,
+	basePath: new URL(env.VITE_BACKEND_ENDPOINT).pathname + "/auth",
+	baseURL: new URL(env.VITE_BACKEND_ENDPOINT).origin,
 	fetchOptions: {
 		credentials: "include",
 	},

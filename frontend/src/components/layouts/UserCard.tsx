@@ -5,8 +5,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
+import type { MouseEventHandler } from "react";
 
-export default function UserCard({ onClick }: { onClick?: () => void }) {
+export default function UserCard({
+	onClick,
+}: {
+	onClick?: MouseEventHandler<HTMLButtonElement>;
+}) {
 	const { isLoading, user } = useSession();
 
 	return (

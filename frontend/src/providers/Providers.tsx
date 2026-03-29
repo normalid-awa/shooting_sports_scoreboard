@@ -14,7 +14,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
 import { ConfirmProvider } from "material-ui-confirm";
-import { useNavigate } from "@tanstack/react-router";
+import { useSession } from "#/integrations/better-auth/auth";
 
 const theme = createTheme({
 	colorSchemes: { light: true, dark: true },
@@ -24,28 +24,32 @@ const theme = createTheme({
 });
 
 function ThemedProvider({ children }: { children: React.ReactNode }) {
-	const navigate = useNavigate();
 	const { closeLoginModal, showLoginModal } = useLoginModal();
+	const { refetch: refetchSession } = useSession();
 
 	return (
 		<>
 			<ConfirmProvider>
-				{children}
+				<Layout>
+					{children}
 
-				<Dialog open={showLoginModal} onClose={closeLoginModal}>
-					<DialogTitle>Login</DialogTitle>
-					<DialogContent>
-						<LoginForm
-							onSuccess={() => {
-								closeLoginModal();
-								navigate({
-									to: ".",
-									reloadDocument: true,
-								});
-							}}
-						/>
-					</DialogContent>
-				</Dialog>
+					<Dialog
+						open={showLoginModal}
+						onClose={closeLoginModal}
+						maxWidth="sm"
+						fullWidth
+					>
+						<DialogTitle>Login</DialogTitle>
+						<DialogContent>
+							<LoginForm
+								onSuccess={async () => {
+									closeLoginModal();
+									await refetchSession();
+								}}
+							/>
+						</DialogContent>
+					</Dialog>
+				</Layout>
 			</ConfirmProvider>
 		</>
 	);
@@ -58,13 +62,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
 			<TanStackQueryProvider>
 				<ThemeProvider theme={theme} defaultMode="system">
 					<CssBaseline />
-					<Layout>
-						<AuthQueryProvider>
-							<TimerProvider>
-								<ThemedProvider>{children}</ThemedProvider>
-							</TimerProvider>
-						</AuthQueryProvider>
-					</Layout>
+					<AuthQueryProvider>
+						<TimerProvider>
+							<ThemedProvider>{children}</ThemedProvider>
+						</TimerProvider>
+					</AuthQueryProvider>
 				</ThemeProvider>
 				<TanStackDevtools
 					config={{
