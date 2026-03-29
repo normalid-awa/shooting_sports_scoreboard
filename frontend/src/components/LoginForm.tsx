@@ -58,7 +58,7 @@ export default function LoginForm(props: LoginFormProps) {
 			<FullScreenCircularProgress showLoading={showLoading} />
 			<Stack
 				component={"form"}
-				sx={{ pt: 1 }}
+				sx={{ pt: 1, width: "100%" }}
 				spacing={1}
 				onSubmit={(e) => {
 					e.preventDefault();

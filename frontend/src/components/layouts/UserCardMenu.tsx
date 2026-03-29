@@ -10,6 +10,7 @@ import { Divider } from "@mui/material";
 import ThemeSwitch from "../ThemeSwitch";
 import { useConfirm } from "material-ui-confirm";
 import { useLoginModal } from "#/hooks/loginModalHooks";
+import { useNavigate } from "@tanstack/react-router";
 
 function LoggedOutMenuItems() {
 	const { openLoginModal } = useLoginModal();
@@ -26,7 +27,7 @@ function LoggedOutMenuItems() {
 
 function LoggedInMenuItems() {
 	const confirm = useConfirm();
-	const { refetch: refetchSession } = useSession();
+	const navigate = useNavigate();
 
 	async function logout() {
 		if (
@@ -54,7 +55,7 @@ function LoggedInMenuItems() {
 			description: "You have been logged out successfully.",
 			hideCancelButton: true,
 		});
-		await refetchSession();
+		navigate({ to: ".", reloadDocument: true });
 	}
 
 	return (

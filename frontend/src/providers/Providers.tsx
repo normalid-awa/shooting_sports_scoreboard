@@ -14,7 +14,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
 import { ConfirmProvider } from "material-ui-confirm";
-import { useSession } from "#/integrations/better-auth/auth";
+import { useNavigate } from "@tanstack/react-router";
 
 const theme = createTheme({
 	colorSchemes: { light: true, dark: true },
@@ -25,7 +25,7 @@ const theme = createTheme({
 
 function ThemedProvider({ children }: { children: React.ReactNode }) {
 	const { closeLoginModal, showLoginModal } = useLoginModal();
-	const { refetch: refetchSession } = useSession();
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -44,7 +44,7 @@ function ThemedProvider({ children }: { children: React.ReactNode }) {
 							<LoginForm
 								onSuccess={async () => {
 									closeLoginModal();
-									await refetchSession();
+									navigate({ to: ".", reloadDocument: true });
 								}}
 							/>
 						</DialogContent>

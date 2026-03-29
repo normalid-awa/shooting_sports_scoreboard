@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 	const title = useMatches()
 		.filter((m) => m.staticData?.pageTitle)
 		.map((m) => m.staticData?.pageTitle)
-		.join(" | ");
+		.join("▸");
 
 	const onUserCardClick: MouseEventHandler<HTMLButtonElement> = (event) => {
 		setAnchorEl(event.currentTarget);
