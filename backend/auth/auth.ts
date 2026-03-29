@@ -3,6 +3,7 @@ import orm from "./database";
 import { env } from "../env";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import * as schema from "./schema";
 
 export const auth = betterAuth({
 	secret: env.BETTER_AUTH_SECRET,
@@ -21,6 +22,11 @@ export const auth = betterAuth({
 	},
 	database: drizzleAdapter(orm, {
 		provider: "pg",
+		usePlural: true,
+		transaction: true,
+		schema: {
+			...schema,
+		},
 	}),
 	emailAndPassword: {
 		enabled: true,

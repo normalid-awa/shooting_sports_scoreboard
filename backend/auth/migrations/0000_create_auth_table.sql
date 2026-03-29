@@ -1,4 +1,4 @@
-CREATE TABLE "account" (
+CREATE TABLE "accounts" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"account_id" text NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "account" (
 	"updated_at" timestamp (6) with time zone NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "session" (
+CREATE TABLE "sessions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"token" varchar(255) NOT NULL,
@@ -23,10 +23,10 @@ CREATE TABLE "session" (
 	"user_agent" text,
 	"created_at" timestamp (6) with time zone NOT NULL,
 	"updated_at" timestamp (6) with time zone NOT NULL,
-	CONSTRAINT "session_token_unique" UNIQUE("token")
+	CONSTRAINT "sessions_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
-CREATE TABLE "user" (
+CREATE TABLE "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" varchar(255) NOT NULL,
@@ -34,10 +34,10 @@ CREATE TABLE "user" (
 	"image" text,
 	"created_at" timestamp (6) with time zone NOT NULL,
 	"updated_at" timestamp (6) with time zone NOT NULL,
-	CONSTRAINT "user_email_unique" UNIQUE("email")
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE "verification" (
+CREATE TABLE "verifications" (
 	"id" text PRIMARY KEY NOT NULL,
 	"identifier" text NOT NULL,
 	"value" text NOT NULL,
@@ -46,5 +46,5 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp (6) with time zone NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
