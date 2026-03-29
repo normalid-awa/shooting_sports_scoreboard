@@ -9,6 +9,9 @@ import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Slide from "@mui/material/Slide";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import NavList from "./NavList";
+import UserCard from "./UserCard";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
 
 export default function MobileLayout(props: LayoutProps) {
 	const showAppBar = useScrollTrigger({});
@@ -21,7 +24,12 @@ export default function MobileLayout(props: LayoutProps) {
 				onClose={() => props.setFold(true)}
 				onOpen={() => props.setFold(false)}
 			>
-				<NavList onNav={() => props.setFold(true)} />
+				<Stack divider={<Divider />} spacing={1} sx={{ width: 200 }}>
+					<Toolbar sx={{ p: 0, width: "100%" }}>
+						<UserCard onClick={props.onUserCardClick} />
+					</Toolbar>
+					<NavList onNav={() => props.setFold(true)} />
+				</Stack>
 			</SwipeableDrawer>
 			<Paper
 				sx={{

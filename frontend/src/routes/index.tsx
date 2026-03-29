@@ -15,6 +15,9 @@ export const Route = createFileRoute("/")({
 			},
 		],
 	}),
+	staticData: {
+		pageTitle: "Home",
+	},
 });
 
 function App() {

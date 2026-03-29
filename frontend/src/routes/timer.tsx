@@ -11,6 +11,9 @@ export const Route = createFileRoute("/timer")({
 			},
 		],
 	}),
+	staticData: {
+		pageTitle: "Timer",
+	},
 });
 
 function RouteComponent() {

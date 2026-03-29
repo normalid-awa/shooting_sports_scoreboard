@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
 import NavList from "./NavList";
+import UserCard from "./UserCard";
 
 export default function DesktopLayout(props: LayoutProps) {
 	return (
@@ -63,6 +64,15 @@ export default function DesktopLayout(props: LayoutProps) {
 						>
 							{props.title}
 						</Typography>
+						<Box
+							sx={{
+								height: "100%",
+								display: "flex",
+								alignItems: "center",
+							}}
+						>
+							<UserCard onClick={props.onUserCardClick} />
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Paper sx={{ m: 0, p: 0, flexGrow: 1 }} variant="outlined">

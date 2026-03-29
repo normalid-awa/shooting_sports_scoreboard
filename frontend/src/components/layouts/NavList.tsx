@@ -22,7 +22,7 @@ const links = linkOptions([
 
 export default function NavList(props: { onNav?: () => void }) {
 	return (
-		<List component="nav" sx={{ width: 200 }}>
+		<List component="nav" sx={{ width: 200 }} disablePadding>
 			{links.map((link) => (
 				<ListItemButton
 					key={link.to}
