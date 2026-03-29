@@ -61,7 +61,7 @@ export default function DesktopLayout(props: LayoutProps) {
 							component="div"
 							sx={{ flexGrow: 1 }}
 						>
-							News
+							{props.title}
 						</Typography>
 					</Toolbar>
 				</AppBar>

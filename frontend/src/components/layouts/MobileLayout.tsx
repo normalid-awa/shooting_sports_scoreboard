@@ -48,7 +48,7 @@ export default function MobileLayout(props: LayoutProps) {
 								component="div"
 								sx={{ flexGrow: 1 }}
 							>
-								News
+								{props.title}
 							</Typography>
 						</Toolbar>
 					</AppBar>
