@@ -13,28 +13,24 @@ import EditIcon from "@mui/icons-material/Edit";
 import { authClient, useSession } from "#/integrations/better-auth/auth";
 import { useState, type ReactNode } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import {
-	Box,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	InputLabel,
-	OutlinedInput,
-	Slider,
-	styled,
-	type DialogProps,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Dialog, { type DialogProps } from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Slider from "@mui/material/Slider";
+import { styled } from "@mui/material/styles";
 import FullScreenCircularProgress from "#/components/FullScreenCircularProgress";
 import { useConfirm } from "material-ui-confirm";
 import { getCroppedImg } from "#/components/ImageCropper";
 import type { Area, Point } from "react-easy-crop";
 import Cropper from "react-easy-crop";
 import { encoreClient } from "#/integrations/tanstack-query/encore-client";
-import { env } from "#/env";
 
 export const Route = createFileRoute("/account/management")({
 	component: () => <EnsureAuth component={<RouteComponent />} />,

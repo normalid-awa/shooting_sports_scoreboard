@@ -4,7 +4,6 @@ import { getAuthData } from "~encore/auth";
 import { userAvatars } from "./encore.service";
 import log from "encore.dev/log";
 import transformObjectStoreUrl from "../lib/transformObjectStoreUrl";
-import orm from "./database";
 
 export const authRoutes = api.raw(
 	{ expose: true, path: "/auth/*path", method: "*" },

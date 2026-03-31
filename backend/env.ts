@@ -7,6 +7,7 @@ export const env = createEnv({
 		BETTER_AUTH_SECRET: z.string(),
 		TRUSTED_ORIGIN: z.string(),
 		PUBLIC_OBJECT_STORAGE_ENDPOINT: z.string(),
+		OBJECT_STORAGE_ENDPOINT: z.string(),
 	},
 
 	/**
