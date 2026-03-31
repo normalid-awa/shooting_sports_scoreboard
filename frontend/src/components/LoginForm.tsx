@@ -43,7 +43,7 @@ export default function LoginForm() {
 			return;
 		}
 
-		confirm({
+		await confirm({
 			title: "Login Successful",
 			content: `You have been logged in as ${result.data.user.name} successfully.`,
 			hideCancelButton: true,
