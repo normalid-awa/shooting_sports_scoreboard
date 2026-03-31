@@ -6,13 +6,17 @@ import MenuList from "@mui/material/MenuList";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import { authClient, useSession } from "#/integrations/better-auth/auth";
-import { Divider } from "@mui/material";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import ThemeSwitch from "../ThemeSwitch";
 import { useConfirm } from "material-ui-confirm";
 import { useLoginModal } from "#/hooks/loginModalHooks";
 import { useNavigate } from "@tanstack/react-router";
 import FullScreenCircularProgress from "../FullScreenCircularProgress";
 import { useState } from "react";
+import UserCard from "./UserCard";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { Link } from "#/integrations/mui/Link";
 
 function LoggedOutMenuItems() {
 	const { openLoginModal } = useLoginModal();
@@ -66,6 +70,24 @@ function LoggedInMenuItems() {
 	return (
 		<>
 			<FullScreenCircularProgress showLoading={loading} />
+			<Box sx={{ p: 1 }}>
+				<Link to="/account" preload="intent">
+					<UserCard variant="outlined" />
+				</Link>
+			</Box>
+			<Link
+				to="/account/management"
+				preload="intent"
+				underline="hover"
+				color="textPrimary"
+			>
+				<MenuItem>
+					<ListItemIcon>
+						<AccountCircle />
+					</ListItemIcon>
+					<ListItemText>Account Management</ListItemText>
+				</MenuItem>
+			</Link>
 			<MenuItem onClick={logout}>
 				<ListItemIcon>
 					<LogoutIcon />

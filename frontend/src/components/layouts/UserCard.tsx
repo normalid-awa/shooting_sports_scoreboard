@@ -1,23 +1,17 @@
 import { useSession } from "#/integrations/better-auth/auth";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
+import Button, { type ButtonProps } from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
-import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
-import type { MouseEventHandler } from "react";
 
-export default function UserCard({
-	onClick,
-}: {
-	onClick?: MouseEventHandler<HTMLButtonElement>;
-}) {
+export default function UserCard({ ...props }: ButtonProps) {
 	const { isLoading, user } = useSession();
 
 	return (
-		<Paper variant="elevation" sx={{ width: "100%" }}>
+		<Box sx={{ width: "100%" }}>
 			<Button
-				onClick={onClick}
 				disabled={isLoading}
 				sx={{
 					width: "100%",
@@ -36,6 +30,7 @@ export default function UserCard({
 						)}
 					</Avatar>
 				}
+				{...props}
 			>
 				{isLoading ? (
 					<Skeleton variant="text" width={100} />
@@ -45,6 +40,6 @@ export default function UserCard({
 					</Typography>
 				)}
 			</Button>
-		</Paper>
+		</Box>
 	);
 }

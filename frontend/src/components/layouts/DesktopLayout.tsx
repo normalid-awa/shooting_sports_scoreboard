@@ -71,7 +71,9 @@ export default function DesktopLayout(props: LayoutProps) {
 								alignItems: "center",
 							}}
 						>
-							<UserCard onClick={props.onUserCardClick} />
+							<Paper variant="outlined">
+								<UserCard onClick={props.onUserCardClick} />
+							</Paper>
 						</Box>
 					</Toolbar>
 				</AppBar>

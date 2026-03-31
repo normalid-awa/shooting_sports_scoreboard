@@ -325,7 +325,7 @@ function RouteComponent() {
 							label="New username"
 							id="new-username-field"
 							name="username"
-							defaultValue={user!.name}
+							defaultValue={user!.name || ""}
 						/>
 					</FormControl>
 				}
