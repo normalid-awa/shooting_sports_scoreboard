@@ -22,7 +22,10 @@ const config = defineConfig((confEnv) => {
 				"/api": {
 					target: env.VITE_LOCAL_BACKEND_ENDPOINT,
 					changeOrigin: true,
-					rewrite: (path) => path.replace(/^\/api/, ""),
+				},
+				"/objects": {
+					target: env.VITE_LOCAL_BACKEND_ENDPOINT,
+					changeOrigin: true,
 				},
 			},
 		},
