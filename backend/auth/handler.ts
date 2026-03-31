@@ -17,6 +17,7 @@ interface AuthData {
 		name: string;
 		image?: string | null | undefined;
 	};
+	rawCookie: string;
 }
 
 export const handler = authHandler<AuthParams, AuthData>(async (params) => {
@@ -31,7 +32,11 @@ export const handler = authHandler<AuthParams, AuthData>(async (params) => {
 		throw APIError.unauthenticated("invalid session");
 	}
 
-	return { userID: session.user.id, user: session.user };
+	return {
+		userID: session.user.id,
+		user: session.user,
+		rawCookie: params.cookie,
+	};
 });
 
 export const authGateway = new Gateway({ authHandler: handler });

@@ -29,8 +29,10 @@ export default function UserCard({
 					<Avatar>
 						{isLoading ? (
 							<CircularProgress />
+						) : user?.image ? (
+							<img src={user.image} width="100%" height="100%" />
 						) : (
-							user?.name?.[0] || "G"
+							(user?.name[0] ?? "G")
 						)}
 					</Avatar>
 				}

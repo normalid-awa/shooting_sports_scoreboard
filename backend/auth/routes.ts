@@ -1,5 +1,10 @@
 import { api } from "encore.dev/api";
 import { auth } from "./auth";
+import { getAuthData } from "~encore/auth";
+import { userAvatars } from "./encore.service";
+import log from "encore.dev/log";
+import transformObjectStoreUrl from "../lib/transformObjectStoreUrl";
+import orm from "./database";
 
 export const authRoutes = api.raw(
 	{ expose: true, path: "/auth/*path", method: "*" },
@@ -35,5 +40,32 @@ export const authRoutes = api.raw(
 		});
 		res.writeHead(response.status);
 		res.end(await response.text());
+	},
+);
+
+export const uploadAvatar = api(
+	{
+		expose: true,
+		auth: true,
+		method: "POST",
+		path: "/auth/uploadAvatar",
+	},
+	async (): Promise<{ uploadUrl: string; viewUrl: string }> => {
+		const { user, rawCookie } = getAuthData()!;
+		const uploadUrl = await userAvatars.signedUploadUrl(user.id, {
+			ttl: 30,
+		});
+		const url = transformObjectStoreUrl(userAvatars.publicUrl(user.id));
+		log.info(`Generated signed URL for user ${user.id} to upload avatar`);
+		log.info(`Avatar URL for user ${user.id}: ${url}`);
+		await auth.api.updateUser({
+			body: {
+				image: url,
+			},
+			headers: {
+				Cookie: rawCookie,
+			},
+		});
+		return { uploadUrl: uploadUrl.url, viewUrl: url };
 	},
 );

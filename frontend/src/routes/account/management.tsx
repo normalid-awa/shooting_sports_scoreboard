@@ -33,6 +33,8 @@ import { useConfirm } from "material-ui-confirm";
 import { getCroppedImg } from "#/components/ImageCropper";
 import type { Area, Point } from "react-easy-crop";
 import Cropper from "react-easy-crop";
+import { encoreClient } from "#/integrations/tanstack-query/encore-client";
+import { env } from "#/env";
 
 export const Route = createFileRoute("/account/management")({
 	component: () => <EnsureAuth component={<RouteComponent />} />,
@@ -291,9 +293,21 @@ function RouteComponent() {
 		});
 	}
 
-	function onEditAvatar(blob: string) {
-		console.log(blob);
-		//TODO: implement avatar update
+	async function onEditAvatar(blob: string) {
+		setLoading(true);
+		const { uploadUrl } = await encoreClient.auth.uploadAvatar();
+		await fetch(uploadUrl, {
+			body: await fetch(blob).then((r) => r.blob()),
+			method: "PUT",
+		});
+		await refetch();
+		setLoading(false);
+		setOpenedDialog(null);
+		confirm({
+			title: "Success",
+			description: "Your avatar has been updated.",
+			hideCancelButton: true,
+		});
 	}
 
 	return (
@@ -383,6 +397,13 @@ function RouteComponent() {
 										</IconButton>
 									}
 									color="primary"
+									slotProps={{
+										badge: {
+											sx: {
+												height: "unset",
+											},
+										},
+									}}
 									sx={{ width: "100%" }}
 								>
 									<Avatar
@@ -393,7 +414,11 @@ function RouteComponent() {
 										}}
 									>
 										{user?.image ? (
-											<img src={user!.image} />
+											<img
+												src={user!.image}
+												width="100%"
+												height="100%"
+											/>
 										) : (
 											<>{user?.name[0]}</>
 										)}
