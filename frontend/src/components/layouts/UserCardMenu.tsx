@@ -11,6 +11,8 @@ import ThemeSwitch from "../ThemeSwitch";
 import { useConfirm } from "material-ui-confirm";
 import { useLoginModal } from "#/hooks/loginModalHooks";
 import { useNavigate } from "@tanstack/react-router";
+import FullScreenCircularProgress from "../FullScreenCircularProgress";
+import { useState } from "react";
 
 function LoggedOutMenuItems() {
 	const { openLoginModal } = useLoginModal();
@@ -26,6 +28,7 @@ function LoggedOutMenuItems() {
 }
 
 function LoggedInMenuItems() {
+	const [loading, setLoading] = useState(false);
 	const confirm = useConfirm();
 	const navigate = useNavigate();
 
@@ -40,6 +43,7 @@ function LoggedInMenuItems() {
 		) {
 			return;
 		}
+		setLoading(true);
 		const result = await authClient.signOut();
 		if (result.error) {
 			console.error(result.error);
@@ -50,6 +54,7 @@ function LoggedInMenuItems() {
 			});
 			return;
 		}
+		setLoading(false);
 		await confirm({
 			title: "Logged Out",
 			description: "You have been logged out successfully.",
@@ -59,12 +64,15 @@ function LoggedInMenuItems() {
 	}
 
 	return (
-		<MenuItem onClick={logout}>
-			<ListItemIcon>
-				<LogoutIcon />
-			</ListItemIcon>
-			<ListItemText>Logout</ListItemText>
-		</MenuItem>
+		<>
+			<FullScreenCircularProgress showLoading={loading} />
+			<MenuItem onClick={logout}>
+				<ListItemIcon>
+					<LogoutIcon />
+				</ListItemIcon>
+				<ListItemText>Logout</ListItemText>
+			</MenuItem>
+		</>
 	);
 }
 

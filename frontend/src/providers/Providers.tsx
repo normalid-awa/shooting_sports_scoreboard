@@ -14,7 +14,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import { AuthQueryProvider } from "@daveyplate/better-auth-tanstack";
 import { ConfirmProvider } from "material-ui-confirm";
-import { useNavigate } from "@tanstack/react-router";
 
 const theme = createTheme({
 	colorSchemes: { light: true, dark: true },
@@ -25,7 +24,6 @@ const theme = createTheme({
 
 function ThemedProvider({ children }: { children: React.ReactNode }) {
 	const { closeLoginModal, showLoginModal } = useLoginModal();
-	const navigate = useNavigate();
 
 	return (
 		<>
@@ -41,12 +39,7 @@ function ThemedProvider({ children }: { children: React.ReactNode }) {
 					>
 						<DialogTitle>Login</DialogTitle>
 						<DialogContent>
-							<LoginForm
-								onSuccess={async () => {
-									closeLoginModal();
-									navigate({ to: ".", reloadDocument: true });
-								}}
-							/>
+							<LoginForm />
 						</DialogContent>
 					</Dialog>
 				</Layout>

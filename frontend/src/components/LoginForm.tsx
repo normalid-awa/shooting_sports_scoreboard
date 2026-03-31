@@ -14,14 +14,12 @@ import {
 	FormControlLabel,
 	FormHelperText,
 } from "@mui/material";
+import { useNavigate } from "@tanstack/react-router";
 
-interface LoginFormProps {
-	onSuccess?: () => void;
-}
-
-export default function LoginForm(props: LoginFormProps) {
+export default function LoginForm() {
 	const confirm = useConfirm();
 	const [showLoading, setShowLoading] = useState(false);
+	const navigate = useNavigate();
 
 	async function emailLogin(
 		email: string,
@@ -50,7 +48,8 @@ export default function LoginForm(props: LoginFormProps) {
 			content: `You have been logged in as ${result.data.user.name} successfully.`,
 			hideCancelButton: true,
 		});
-		props.onSuccess?.();
+
+		navigate({ to: ".", reloadDocument: true });
 	}
 
 	return (
