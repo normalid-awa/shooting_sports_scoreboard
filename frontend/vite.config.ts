@@ -11,11 +11,13 @@ const config = defineConfig((confEnv) => {
 	return {
 		plugins: [
 			devtools(),
-			cloudflare({ viteEnvironment: { name: "ssr" } }),
 			tsconfigPaths({ projects: ["./tsconfig.json"] }),
 			tanstackStart(),
 			viteReact(),
 			basicSsl(),
+			...(confEnv.mode === "production"
+				? [cloudflare({ viteEnvironment: { name: "ssr" } })]
+				: []),
 		],
 		server: {
 			proxy: {
