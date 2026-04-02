@@ -12,6 +12,8 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Providers } from "#/providers/Providers";
+import { getIsomorphicSession } from "#/integrations/better-auth/getIsomorphicSession";
+import { defaultAuthQueryOptions } from "@daveyplate/better-auth-tanstack";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -32,6 +34,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 		],
 	}),
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData({
+			queryKey: defaultAuthQueryOptions.sessionKey,
+			queryFn: async () => await getIsomorphicSession(),
+		});
+	},
 	component: RootDocument,
 });
 

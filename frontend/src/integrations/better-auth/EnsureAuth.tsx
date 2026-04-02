@@ -1,22 +1,17 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { authClient } from "./auth";
+import { useSuspenseSession } from "./auth";
 import type { ReactElement } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import LoginForm from "#/components/LoginForm";
-import FullScreenCircularProgress from "#/components/FullScreenCircularProgress";
 import Paper from "@mui/material/Paper";
 
 export default function EnsureAuth({ component }: { component: ReactElement }) {
-	const { data: result, isLoading } = useSuspenseQuery({
-		queryKey: [],
-		queryFn: () => authClient.getSession(),
-	});
+	const {
+		data: { data: session },
+	} = useSuspenseSession();
 
-	if (isLoading) return <FullScreenCircularProgress showLoading />;
-
-	if (result.data?.user) return <>{component}</>;
+	if (session?.user) return <>{component}</>;
 	else
 		return (
 			<Container

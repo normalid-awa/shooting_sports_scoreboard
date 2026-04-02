@@ -10,7 +10,10 @@ import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import { authClient, useSession } from "#/integrations/better-auth/auth";
+import {
+	authClient,
+	useSuspenseSession,
+} from "#/integrations/better-auth/auth";
 import { useState, type ReactNode } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Box from "@mui/material/Box";
@@ -240,7 +243,10 @@ function ImageCropperForm(props: {
 function RouteComponent() {
 	const [openedDialog, setOpenedDialog] = useState<null | string>(null);
 	const [loading, setLoading] = useState(false);
-	const { user, refetch } = useSession();
+	const {
+		data: { data: session },
+		refetch,
+	} = useSuspenseSession();
 	const confirm = useConfirm();
 
 	async function onEditUsername(newName: string) {
@@ -325,7 +331,7 @@ function RouteComponent() {
 							label="New username"
 							id="new-username-field"
 							name="username"
-							defaultValue={user!.name || ""}
+							defaultValue={session?.user.name || ""}
 						/>
 					</FormControl>
 				}
@@ -347,7 +353,7 @@ function RouteComponent() {
 							id="new-email-field"
 							name="email"
 							type="email"
-							defaultValue={user!.email}
+							defaultValue={session?.user.email || ""}
 						/>
 					</FormControl>
 				}
@@ -409,14 +415,14 @@ function RouteComponent() {
 											aspectRatio: "1/1",
 										}}
 									>
-										{user?.image ? (
+										{session?.user.image ? (
 											<img
-												src={user!.image}
+												src={session?.user.image}
 												width="100%"
 												height="100%"
 											/>
 										) : (
-											<>{user?.name[0]}</>
+											<>{session?.user.name[0]}</>
 										)}
 									</Avatar>
 								</Badge>
@@ -430,7 +436,7 @@ function RouteComponent() {
 									slots={{
 										displayText: (
 											<Typography variant="subtitle1">
-												Username: {user?.name}
+												Username: {session?.user.name}
 											</Typography>
 										),
 										actions: (
@@ -450,7 +456,7 @@ function RouteComponent() {
 									slots={{
 										displayText: (
 											<Typography variant="subtitle1">
-												Email: {user?.email}
+												Email: {session?.user.email}
 											</Typography>
 										),
 										actions: (

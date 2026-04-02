@@ -1,6 +1,10 @@
 import { env } from "#/env";
 import { createAuthClient } from "better-auth/react";
-import { createAuthHooks } from "@daveyplate/better-auth-tanstack";
+import {
+	createAuthHooks,
+	defaultAuthQueryOptions,
+} from "@daveyplate/better-auth-tanstack";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const authClient = createAuthClient({
 	basePath: new URL(env.VITE_BACKEND_ENDPOINT).pathname + "/auth",
@@ -31,3 +35,10 @@ export const {
 	useAuthQuery,
 	useAuthMutation,
 } = authHooks;
+
+export const useSuspenseSession = () => {
+	return useSuspenseQuery({
+		queryKey: defaultAuthQueryOptions.sessionKey,
+		queryFn: async () => await authClient.getSession(),
+	});
+};

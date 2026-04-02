@@ -5,7 +5,10 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuList from "@mui/material/MenuList";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
-import { authClient, useSession } from "#/integrations/better-auth/auth";
+import {
+	authClient,
+	useSuspenseSession,
+} from "#/integrations/better-auth/auth";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import ThemeSwitch from "../ThemeSwitch";
@@ -103,14 +106,16 @@ function CommonMenuItems() {
 }
 
 export default function UserCardMenu(props: MenuProps) {
-	const { user } = useSession();
+	const {
+		data: { data: session },
+	} = useSuspenseSession();
 
 	return (
 		<Menu {...props}>
 			<MenuList sx={{ py: 0 }}>
 				<CommonMenuItems />
 				<Divider sx={{ my: 1 }} />
-				{user ? <LoggedInMenuItems /> : <LoggedOutMenuItems />}
+				{session?.user ? <LoggedInMenuItems /> : <LoggedOutMenuItems />}
 			</MenuList>
 		</Menu>
 	);
