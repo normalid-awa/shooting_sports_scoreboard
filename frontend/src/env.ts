@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
 	server: {
-		BACKEND_ENDPOINT: z.string().url().optional(),
+		BACKEND_ENDPOINT: z.url().optional(),
 	},
 
 	/**
