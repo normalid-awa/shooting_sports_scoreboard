@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from "vite";
 import { devtools } from "@tanstack/devtools-vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import basicSsl from "@vitejs/plugin-basic-ssl";
@@ -11,7 +10,6 @@ const config = defineConfig((confEnv) => {
 	return {
 		plugins: [
 			devtools(),
-			tsconfigPaths({ projects: ["./tsconfig.json"] }),
 			tanstackStart(),
 			viteReact(),
 			basicSsl(),
@@ -27,6 +25,9 @@ const config = defineConfig((confEnv) => {
 					rewrite: (path) => path.replace(/\/api/, ""),
 				},
 			},
+		},
+		resolve: {
+			tsconfigPaths: true,
 		},
 	};
 });
