@@ -4,17 +4,17 @@ export function useLoginModal() {
 	const navigate = useNavigate();
 	const { showLoginModal = false } = useSearch({
 		from: "__root__",
-	}) as { showLoginModal?: boolean };
+	}) as unknown as { showLoginModal?: boolean };
 
-	function openLoginModal() {
-		navigate({
+	async function openLoginModal() {
+		await navigate({
 			to: ".",
 			search: (old) => ({ ...old, showLoginModal: true }),
 		});
 	}
 
-	function closeLoginModal() {
-		navigate({
+	async function closeLoginModal() {
+		await navigate({
 			to: ".",
 			search: (old) => ({ ...old, showLoginModal: undefined }),
 		});

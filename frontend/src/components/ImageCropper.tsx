@@ -1,8 +1,4 @@
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import { useState } from "react";
-import { Box, FormControlLabel, FormGroup, Slider } from "@mui/material";
-import Cropper, { type Area, type Point } from "react-easy-crop";
+import { type Area } from "react-easy-crop";
 
 export const createImage = (url: string): Promise<HTMLImageElement> =>
 	new Promise((resolve, reject) => {
@@ -101,7 +97,7 @@ export async function getCroppedImg(
 	// return croppedCanvas.toDataURL('image/jpeg');
 
 	// As a blob
-	return new Promise((resolve, _) => {
+	return new Promise((resolve) => {
 		croppedCanvas.toBlob((file) => {
 			resolve(URL.createObjectURL(file!));
 		}, "image/png");
