@@ -7,9 +7,7 @@ import LoginForm from "#/components/LoginForm";
 import Paper from "@mui/material/Paper";
 
 export default function EnsureAuth({ component }: { component: ReactElement }) {
-	const {
-		data: { data: session },
-	} = useSuspenseSession();
+	const { session } = useSuspenseSession();
 
 	if (session?.user) return <>{component}</>;
 	else

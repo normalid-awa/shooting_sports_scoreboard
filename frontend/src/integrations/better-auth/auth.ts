@@ -37,8 +37,12 @@ export const {
 } = authHooks;
 
 export const useSuspenseSession = () => {
-	return useSuspenseQuery({
+	const {
+		data: { data: session },
+		refetch,
+	} = useSuspenseQuery({
 		queryKey: defaultAuthQueryOptions.sessionKey,
 		queryFn: async () => await authClient.getSession(),
 	});
+	return { session, refetch };
 };

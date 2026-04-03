@@ -243,10 +243,7 @@ function ImageCropperForm(props: {
 function RouteComponent() {
 	const [openedDialog, setOpenedDialog] = useState<null | string>(null);
 	const [loading, setLoading] = useState(false);
-	const {
-		data: { data: session },
-		refetch,
-	} = useSuspenseSession();
+	const { session, refetch } = useSuspenseSession();
 	const confirm = useConfirm();
 
 	async function onEditUsername(newName: string) {

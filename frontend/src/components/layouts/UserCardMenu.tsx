@@ -106,9 +106,7 @@ function CommonMenuItems() {
 }
 
 export default function UserCardMenu(props: MenuProps) {
-	const {
-		data: { data: session },
-	} = useSuspenseSession();
+	const { session } = useSuspenseSession();
 
 	return (
 		<Menu {...props}>
