@@ -41,8 +41,8 @@
 	 */
 	"r2_buckets": [
 		{
-			"binding": "userAvatars",
-			"bucket_name": "user-avatars",
+			"binding": "publicBucket",
+			"bucket_name": "shooting-sports-scoreboard-public-bucket",
 		},
 	],
 }
