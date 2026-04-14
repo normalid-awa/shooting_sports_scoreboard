@@ -1,17 +1,19 @@
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
-import { authRoute } from "./modules/auth/routes";
+import { authRoutes } from "./modules/auth/routes";
 import { authMarco } from "./modules/auth/marco";
 import "@valibot/i18n/zh-TW";
 import { env } from "cloudflare:workers";
 import v from "./validators";
+import { r2Routes } from "./modules/r2/routes";
 
 v.setGlobalConfig({ lang: "zh-TW" });
 
 export default new Elysia({
 	adapter: CloudflareAdapter,
 })
-	.use(authRoute)
+	.use(authRoutes)
+	.use(r2Routes)
 	.use(authMarco)
 	.get("/", ({ set }) => {
 		set.headers["content-type"] = "text/html";

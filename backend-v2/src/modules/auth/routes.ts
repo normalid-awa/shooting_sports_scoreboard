@@ -4,7 +4,7 @@ import { authMarco } from "./marco";
 import v from "@/validators";
 import { env } from "cloudflare:workers";
 
-export const authRoute = new Elysia({
+export const authRoutes = new Elysia({
 	prefix: "/auth",
 })
 	.use(authMarco)
