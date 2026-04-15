@@ -8,13 +8,12 @@ export const authRoutes = new Elysia({
 	prefix: "/auth",
 })
 	.use(authMarco)
-	.mount(auth.handler)
 	.post(
 		"/uploadAvatar",
 		async ({ body, user, request: { headers } }) => {
 			const path = `/userAvatars/${user.id}`;
 			await env.publicBucket.put(path, body.avatar.stream());
-			return await auth.api.updateUser({
+			return await auth().api.updateUser({
 				body: {
 					image: env.PUBLIC_ENDPOINT + path,
 				},
@@ -30,4 +29,5 @@ export const authRoutes = new Elysia({
 				),
 			}),
 		},
-	);
+	)
+	.mount((res) => auth().handler(res));

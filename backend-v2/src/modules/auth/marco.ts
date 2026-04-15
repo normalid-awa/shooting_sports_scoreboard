@@ -4,7 +4,7 @@ import { auth } from "./auth";
 export const authMarco = new Elysia({ name: "auth" }).macro({
 	auth: {
 		async resolve({ status, request: { headers } }) {
-			const session = await auth.api.getSession({
+			const session = await auth().api.getSession({
 				headers,
 			});
 			if (!session) return status("Unauthorized");
