@@ -8,7 +8,6 @@ export const authRoutes = new Elysia({
 	prefix: "/auth",
 })
 	.use(authMarco)
-	.mount(auth.handler)
 	.post(
 		"/uploadAvatar",
 		async ({ body, user, request: { headers } }) => {
@@ -30,4 +29,5 @@ export const authRoutes = new Elysia({
 				),
 			}),
 		},
-	);
+	)
+	.mount((res) => auth().handler(res));

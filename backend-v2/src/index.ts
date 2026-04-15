@@ -25,6 +25,8 @@ export default new Elysia({
 				<input name="d" value="123"/>
 				<button type="submit">submit</button>
 			</form>
+			<img src="/r2/public/test/123"/>
+			<img src="/r2/public/test/123"/>
 		</body>
 		</html>
 		`;
