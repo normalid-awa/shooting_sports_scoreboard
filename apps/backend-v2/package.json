@@ -2,12 +2,16 @@
 	"name": "backend-v2",
 	"version": "0.0.0",
 	"private": true,
+	"exports": {
+		"types":"./dist/types"
+	},
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev --port 4444 --ip 0.0.0.0",
 		"start": "wrangler dev",
 		"test": "vitest",
-		"cf-typegen": "wrangler types"
+		"cf-typegen": "wrangler types",
+		"build": "tsc"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.12.4",

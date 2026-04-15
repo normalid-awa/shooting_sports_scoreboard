@@ -9,7 +9,7 @@ import { r2Routes } from "./modules/r2/routes";
 
 v.setGlobalConfig({ lang: "zh-TW" });
 
-export default new Elysia({
+const app = new Elysia({
 	adapter: CloudflareAdapter,
 })
 	.use(authRoutes)
@@ -62,3 +62,7 @@ export default new Elysia({
 		},
 	)
 	.compile();
+
+export type App = typeof app;
+
+export default app;
