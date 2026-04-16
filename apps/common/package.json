@@ -1,0 +1,15 @@
+{
+	"name": "@shooting_sports_scoreboard/common",
+	"version": "1.0.0",
+	"exports": "./dist/index.js",
+	"scripts": {
+		"build": "tsc"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "module",
+	"dependencies": {
+		"typescript": "^5.9.3"
+	}
+}
