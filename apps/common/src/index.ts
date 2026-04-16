@@ -1,1 +1,1 @@
-export { Sports } from "./sports.js";
+export { Sports, type Sport } from "./sports.js";

@@ -7,6 +7,7 @@ import { env } from "cloudflare:workers";
 import * as v from "valibot";
 import { r2Routes } from "./modules/r2/routes";
 import additionalValidators from "./validators";
+import { shooterProfilesRoute } from "./modules/shooterProfiles/route";
 
 v.setGlobalConfig({ lang: "zh-TW" });
 
@@ -15,6 +16,7 @@ const app = new Elysia({
 })
 	.use(authRoutes)
 	.use(r2Routes)
+	.use(shooterProfilesRoute)
 	.use(authMarco)
 	.get("/", ({ set }) => {
 		set.headers["content-type"] = "text/html";
