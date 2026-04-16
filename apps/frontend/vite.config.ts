@@ -28,6 +28,7 @@ const config = defineConfig((confEnv) => {
 		},
 		resolve: {
 			tsconfigPaths: true,
+			external: ["@shooting_sports_scoreboard/backend-v2"],
 		},
 	};
 });

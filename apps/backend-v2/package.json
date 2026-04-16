@@ -1,9 +1,9 @@
 {
-	"name": "backend-v2",
+	"name": "@shooting_sports_scoreboard/backend-v2",
 	"version": "0.0.0",
 	"private": true,
 	"exports": {
-		"types":"./dist/types"
+		"types": "./dist/types/index.d.ts"
 	},
 	"scripts": {
 		"deploy": "wrangler deploy",

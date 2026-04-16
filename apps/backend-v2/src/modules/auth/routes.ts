@@ -11,18 +11,23 @@ export const authRoutes = new Elysia({
 	.post(
 		"/uploadAvatar",
 		async ({ body, user, request: { headers } }) => {
-			const path = `/userAvatars/${user.id}`;
-			await env.publicBucket.put(path, body.stream());
+			const path = `userAvatars/${user.id}`;
+			await env.publicBucket.put(path, body.avatar.stream());
 			return await auth().api.updateUser({
 				body: {
-					image: env.PUBLIC_ENDPOINT + path,
+					image: env.PUBLIC_R2_ENDPOINT + "/" + path,
 				},
 				headers,
 			});
 		},
 		{
 			auth: true,
-			body: v.pipeAsync(v.file(), v.checkFileAsync(["image/jpeg", "image/gif", "image/png"], 0.5)),
+			body: v.objectAsync({
+				avatar: v.pipeAsync(
+					v.file(),
+					v.checkFileAsync(["image/jpeg", "image/gif", "image/png"], 0.5),
+				),
+			}),
 		},
 	)
 	.mount((res) => auth().handler(res));

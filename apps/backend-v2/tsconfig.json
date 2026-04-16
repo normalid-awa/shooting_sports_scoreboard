@@ -24,7 +24,7 @@
 		/* Disable emitting files from a compilation. */
 		"noEmit": false,
 
-		"rootDir": "./",
+		"rootDir": "./src",
 		"declaration": true,
 		"declarationDir": "./dist/types",
 		"emitDeclarationOnly": true,

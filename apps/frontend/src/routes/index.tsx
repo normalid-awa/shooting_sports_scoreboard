@@ -1,4 +1,4 @@
-import { encoreClient } from "#/integrations/tanstack-query/encore-client";
+import { client } from "#/integrations/tanstack-query/api";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -23,15 +23,19 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	const query = useQuery({
-		queryKey: [encoreClient.hello.hello.name],
-		queryFn: () => encoreClient.hello.hello(),
+		queryKey: [client.get["~path"]],
+		queryFn: () => client.get(),
 	});
 
 	return (
 		<main>
 			<p>
 				api call result:
-				{query.data?.msg ?? "loading"}
+				<a
+					dangerouslySetInnerHTML={{
+						__html: query.data?.data ?? "loading",
+					}}
+				></a>
 			</p>
 			<h1>Hello, world!</h1>
 			<h1>Hello, world!</h1>

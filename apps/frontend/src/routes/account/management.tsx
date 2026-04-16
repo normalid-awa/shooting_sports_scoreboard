@@ -33,7 +33,7 @@ import { useConfirm } from "material-ui-confirm";
 import { getCroppedImg } from "#/components/ImageCropper";
 import type { Area, Point } from "react-easy-crop";
 import Cropper from "react-easy-crop";
-import { encoreClient } from "#/integrations/tanstack-query/encore-client";
+import { client } from "#/integrations/tanstack-query/api";
 
 export const Route = createFileRoute("/account/management")({
 	component: () => <EnsureAuth component={<RouteComponent />} />,
@@ -118,7 +118,7 @@ const VisuallyHiddenInput = styled("input")({
 
 function ImageCropperForm(props: {
 	onClose: () => void;
-	onSubmit: (blob: string) => void;
+	onSubmit: (blob: Blob) => void;
 }) {
 	const [imgSrc, setImgSrc] = useState<string | null>(null);
 	const [scale, setScale] = useState(1);
@@ -292,21 +292,28 @@ function RouteComponent() {
 		});
 	}
 
-	async function onEditAvatar(blob: string) {
+	async function onEditAvatar(blob: Blob) {
 		setLoading(true);
-		const { uploadUrl } = await encoreClient.auth.uploadAvatar();
-		await fetch(uploadUrl, {
-			body: await fetch(blob).then((r) => r.blob()),
-			method: "PUT",
+		const result = await client.auth.uploadAvatar.post({
+			avatar: new File([blob], "avatar.png"),
 		});
-		await refetch();
+		if (result.error?.status == 422) {
+			confirm({
+				hideCancelButton: true,
+				title: "Error",
+				content: result.error.value.message,
+			});
+			setLoading(false);
+			return;
+		}
 		setLoading(false);
 		setOpenedDialog(null);
-		confirm({
+		await confirm({
 			title: "Success",
 			description: "Your avatar has been updated.",
 			hideCancelButton: true,
 		});
+		await refetch();
 	}
 
 	return (
@@ -361,7 +368,7 @@ function RouteComponent() {
 				infoLabel="Avatar"
 				open={openedDialog == "avatar"}
 				onSave={(formData) =>
-					onEditAvatar(formData.get("avatar")! as string)
+					onEditAvatar(formData.get("avatar")! as Blob)
 				}
 				onClose={() => setOpenedDialog(null)}
 				hideDialogAction
