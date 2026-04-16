@@ -15,6 +15,7 @@
 	"homepage": "https://github.com/normalid-awa/shooting_sports_scoreboard#readme",
 	"workspaces": [
 		"apps/backend",
-		"apps/frontend"
+		"apps/frontend",
+		"apps/common"
 	]
 }

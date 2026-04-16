@@ -4,8 +4,9 @@ import { authRoutes } from "./modules/auth/routes";
 import { authMarco } from "./modules/auth/marco";
 import "@valibot/i18n/zh-TW";
 import { env } from "cloudflare:workers";
-import v from "./validators";
+import * as v from "valibot";
 import { r2Routes } from "./modules/r2/routes";
+import additionalValidators from "./validators";
 
 v.setGlobalConfig({ lang: "zh-TW" });
 
@@ -55,7 +56,7 @@ const app = new Elysia({
 			body: v.objectAsync({
 				selected: v.pipeAsync(
 					v.file(),
-					v.checkFileAsync(["image/jpeg", "image/gif", "image/png"], 10),
+					additionalValidators.checkFileAsync(["image/jpeg", "image/gif", "image/png"], 10),
 				),
 				d: v.string(),
 			}),

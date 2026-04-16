@@ -22,6 +22,7 @@
 		"wrangler": "^4.82.2"
 	},
 	"dependencies": {
+		"@shooting_sports_scoreboard/common": "*",
 		"@better-auth/drizzle-adapter": "^1.6.2",
 		"@valibot/i18n": "^1.1.0",
 		"better-auth": "^1.6.2",
