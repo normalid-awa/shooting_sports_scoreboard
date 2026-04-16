@@ -1,24 +1,23 @@
 import { fileType } from "elysia";
 import { FileType } from "elysia/type-system/types";
-import * as valibot from "valibot";
+import * as v from "valibot";
 
 export const fileValidatorAsync = (sizeInMb: number, fileTypes: FileType | FileType[]) =>
-	valibot.cacheAsync(
-		valibot.pipeAsync(
-			valibot.file(),
-			valibot.maxSize(1024 * 1024 * sizeInMb, `Please select a file smaller than ${sizeInMb} MB.`),
-			valibot.checkAsync(async (f) => fileType(f, fileTypes), "Invalid file type."),
+	v.cacheAsync(
+		v.pipeAsync(
+			v.file(),
+			v.maxSize(1024 * 1024 * sizeInMb, `Please select a file smaller than ${sizeInMb} MB.`),
+			v.checkAsync(async (f) => fileType(f, fileTypes), "Invalid file type."),
 		),
 	);
 
-const v = {
-	...valibot,
+const additionalValidators = {
 	checkFileAsync: (fileTypes: FileType | FileType[], sizeInMb: number) =>
-		valibot.pipeAsync(
+		v.pipeAsync(
 			v.file(),
-			valibot.checkAsync(async (f) => fileType(f as File, fileTypes), "Invalid file type."),
-			valibot.maxSize(1024 * 1024 * sizeInMb, `File size exceeds ${sizeInMb} MB.`),
+			v.checkAsync(async (f) => fileType(f as File, fileTypes), "Invalid file type."),
+			v.maxSize(1024 * 1024 * sizeInMb, `File size exceeds ${sizeInMb} MB.`),
 		),
 };
 
-export default v;
+export default additionalValidators;
