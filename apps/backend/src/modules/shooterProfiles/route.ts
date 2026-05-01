@@ -32,22 +32,25 @@ export const shooterProfilesRoute = new Elysia({
 		"/list",
 		async ({ body, orm }) => {
 			const qb = orm.select().from(shooterProfiles).$dynamic();
-			return await withPagination(qb, shooterProfiles, body!.pagination);
+			return await withPagination(
+				qb,
+				shooterProfiles,
+				{
+					orderBy: "createdAt",
+					order: "desc",
+					limit: 10,
+					page: 1,
+				},
+				body?.pagination,
+			);
 		},
 		{
 			body: v.optional(
 				v.object({
-					pagination: createPaginationQuerySchema(
-						["id", "createdAt"],
-						{
-							min: 1,
-							max: 20,
-						},
-						{
-							orderBy: "createdAt",
-							order: "desc",
-						},
-					),
+					pagination: createPaginationQuerySchema(["id", "createdAt"], {
+						min: 1,
+						max: 20,
+					}),
 				}),
 			),
 		},
