@@ -6,20 +6,22 @@ export function createPaginationQuerySchema<const T extends readonly string[]>(
 	orderableFields: T,
 	limit: { min: number; max: number },
 ) {
-	return v.optional(
-		v.object({
-			orderBy: v.optional(v.picklist(orderableFields)),
-			order: v.optional(v.picklist(["asc", "desc"])),
-			limit: v.optional(
-				v.pipe(
-					v.number(),
-					v.integer(),
-					v.minValue(limit.min),
-					v.maxValue(limit.max),
+	return v.cache(
+		v.optional(
+			v.object({
+				orderBy: v.optional(v.picklist(orderableFields)),
+				order: v.optional(v.picklist(["asc", "desc"])),
+				limit: v.optional(
+					v.pipe(
+						v.number(),
+						v.integer(),
+						v.minValue(limit.min),
+						v.maxValue(limit.max),
+					),
 				),
-			),
-			page: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))),
-		}),
+				page: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))),
+			}),
+		),
 	);
 }
 
