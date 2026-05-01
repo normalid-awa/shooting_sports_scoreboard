@@ -45,6 +45,7 @@ export async function withPagination<
 		page?: number;
 	},
 ) {
+	//FIXME: this is a very bad pratice which query twice to get total items. Leads to performance issues.
 	const totalItems = (await queryBuilder).length;
 	const result = await queryBuilder
 		.orderBy(
