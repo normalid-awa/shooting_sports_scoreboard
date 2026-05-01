@@ -1,9 +1,11 @@
 import { ormMarco } from "@/database/marcos";
 import { shooterProfiles } from "@/database/schemas/shooterProfiles";
+import { createLogicalFilterSchema, withFilters } from "@/utils/filters";
 import {
 	createPaginationQuerySchema,
 	withPagination,
 } from "@/utils/paginations";
+import { Sports } from "@shooting_sports_scoreboard/common";
 import { eq } from "drizzle-orm";
 import Elysia from "elysia";
 import * as v from "valibot";
@@ -31,7 +33,8 @@ export const shooterProfilesRoute = new Elysia({
 	.post(
 		"/list",
 		async ({ body, orm }) => {
-			const qb = orm.select().from(shooterProfiles).$dynamic();
+			let qb = orm.select().from(shooterProfiles).$dynamic();
+			qb = withFilters(qb, shooterProfiles, body?.filter);
 			return await withPagination(
 				qb,
 				shooterProfiles,
@@ -50,6 +53,16 @@ export const shooterProfilesRoute = new Elysia({
 					pagination: createPaginationQuerySchema(["id", "createdAt"], {
 						min: 1,
 						max: 20,
+					}),
+					filter: createLogicalFilterSchema({
+						name: {
+							ops: ["like"],
+							schema: v.string(),
+						},
+						sport: {
+							ops: ["eq", "ne", "in", "nin"],
+							schema: v.picklist(Sports),
+						},
 					}),
 				}),
 			),
