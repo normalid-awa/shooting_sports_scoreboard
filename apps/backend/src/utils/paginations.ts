@@ -27,10 +27,11 @@ export function createPaginationQuerySchema<const T extends readonly string[]>(
 
 export async function withPagination<
 	Qb extends PgSelect,
-	OrderByKeys extends object,
+	Schema extends PgTableWithColumns<any>,
+	OrderByKeys extends Schema["_"]["columns"],
 >(
 	queryBuilder: Qb,
-	schema: PgTableWithColumns<any>,
+	schema: Schema,
 	defaultPagination: {
 		orderBy: keyof OrderByKeys;
 		order: "asc" | "desc";
