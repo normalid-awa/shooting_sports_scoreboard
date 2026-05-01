@@ -15,6 +15,20 @@
       "when": 1776324934582,
       "tag": "0001_addShooterProfiles",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776340526017,
+      "tag": "0002_addCreatedDateForShooterProfiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777611324355,
+      "tag": "0003_SetCreatedAtAsNonNullField",
+      "breakpoints": true
     }
   ]
 }

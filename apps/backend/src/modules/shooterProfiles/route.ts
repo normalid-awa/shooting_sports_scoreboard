@@ -1,5 +1,9 @@
 import { ormMarco } from "@/database/marcos";
 import { shooterProfiles } from "@/database/schemas/shooterProfiles";
+import {
+	createPaginationQuerySchema,
+	withPagination,
+} from "@/utils/paginations";
 import { eq } from "drizzle-orm";
 import Elysia from "elysia";
 import * as v from "valibot";
@@ -22,5 +26,29 @@ export const shooterProfilesRoute = new Elysia({
 			params: v.object({
 				id: v.pipe(v.string(), v.uuid()),
 			}),
+		},
+	)
+	.post(
+		"/list",
+		async ({ body, orm }) => {
+			const qb = orm.select().from(shooterProfiles).$dynamic();
+			return await withPagination(qb, shooterProfiles, body!.pagination);
+		},
+		{
+			body: v.optional(
+				v.object({
+					pagination: createPaginationQuerySchema(
+						["id", "createdAe"],
+						{
+							min: 1,
+							max: 20,
+						},
+						{
+							orderBy: "createdAe",
+							order: "desc",
+						},
+					),
+				}),
+			),
 		},
 	);

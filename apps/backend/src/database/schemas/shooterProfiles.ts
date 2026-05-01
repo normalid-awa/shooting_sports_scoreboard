@@ -6,4 +6,5 @@ export const shooterProfiles = p.pgTable("shooter_profiles", {
 	name: p.text().notNull(),
 	sport: sportsEnum().notNull(),
 	userId: p.text(),
+	createdAt: p.timestamp().defaultNow().notNull(),
 });

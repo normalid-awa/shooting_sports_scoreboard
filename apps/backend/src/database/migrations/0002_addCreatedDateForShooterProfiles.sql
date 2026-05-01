@@ -1,0 +1,1 @@
+ALTER TABLE "shooter_profiles" ADD COLUMN "createdAt" timestamp DEFAULT now();
