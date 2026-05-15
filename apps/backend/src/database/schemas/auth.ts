@@ -1,4 +1,5 @@
 import { Cascade, defineEntity, InferEntity, p } from "@mikro-orm/core";
+import { ShooterProfileSchema } from "./shooterProfiles.js";
 
 export const UserSchema = defineEntity({
 	name: "User",
@@ -13,6 +14,9 @@ export const UserSchema = defineEntity({
 			.datetime()
 			.onCreate(() => new Date())
 			.onUpdate(() => new Date()),
+
+		//custom column
+		shooterProfiles: () => p.oneToMany(ShooterProfileSchema).mappedBy("user"),
 	},
 });
 
