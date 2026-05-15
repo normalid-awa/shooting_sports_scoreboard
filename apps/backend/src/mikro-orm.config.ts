@@ -13,8 +13,11 @@ import type { Dialect } from "kysely";
 import { PostgresDialect } from "kysely";
 import { Pool } from "pg";
 import { PostgreSqlDriver, PostgreSqlPlatform } from "@mikro-orm/postgresql";
-import { env } from "cloudflare:workers";
 import "dotenv/config";
+import isOnWorker from "./utils/isOnWorker.js";
+
+let env: Cloudflare.Env;
+if (isOnWorker()) env = (await import("cloudflare:workers")).env;
 
 class HyperdriveConnection extends AbstractSqlConnection {
 	createKyselyDialect(overrides: Dictionary): Dialect {
@@ -34,7 +37,8 @@ class HyperdriveDriver extends AbstractSqlDriver<HyperdriveConnection> {
 
 export default defineConfig({
 	compiledFunctions,
-	clientUrl: process.env.PG_URL,
+	clientUrl:
+		process.env.CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE,
 	entities: Object.values(Schemas),
 	migrations: {
 		pathTs: "./src/database/migrations",
@@ -42,8 +46,5 @@ export default defineConfig({
 	extensions: [Migrator],
 	debug: true,
 	entityManager: EntityManagerWithPagination,
-	driver:
-		navigator.userAgent === "Cloudflare-Workers"
-			? HyperdriveDriver
-			: PostgreSqlDriver,
+	driver: isOnWorker() ? HyperdriveDriver : PostgreSqlDriver,
 });
