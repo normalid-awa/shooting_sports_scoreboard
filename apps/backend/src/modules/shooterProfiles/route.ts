@@ -27,18 +27,16 @@ export const shooterProfilesRoute = new Elysia({
 	.post(
 		"/list",
 		async ({ body, em }) => {
-			return serialize(
-				await em.findAndPagination(
-					ShooterProfileSchema,
-					{},
-					{
-						orderBy: "name",
-						order: "desc",
-						limit: 10,
-						page: 1,
-					},
-					body?.pagination,
-				),
+			return await em.findAndPagination(
+				ShooterProfileSchema,
+				{},
+				{
+					orderBy: "name",
+					order: "desc",
+					limit: 10,
+					page: 1,
+				},
+				body?.pagination,
 			);
 		},
 		{
