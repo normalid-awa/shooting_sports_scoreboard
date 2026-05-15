@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import Elysia from "elysia";
+import { Elysia } from "elysia";
 
 export const r2Routes = new Elysia({ prefix: "r2" })
 	.get("/*", async ({ params, status, set, headers }) => {

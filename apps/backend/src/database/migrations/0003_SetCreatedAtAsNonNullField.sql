@@ -1,1 +1,0 @@
-ALTER TABLE "shooter_profiles" ALTER COLUMN "createdAt" SET NOT NULL;

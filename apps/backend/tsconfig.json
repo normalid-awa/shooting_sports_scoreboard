@@ -10,9 +10,9 @@
 		"jsx": "react-jsx",
 
 		/* Specify what module code is generated. */
-		"module": "es2022",
+		"module": "nodenext",
 		/* Specify how TypeScript looks up a file from a given module specifier. */
-		"moduleResolution": "Bundler",
+		"moduleResolution": "nodenext",
 		/* Enable importing .json files */
 		"resolveJsonModule": true,
 
@@ -25,9 +25,9 @@
 		"noEmit": false,
 
 		"rootDir": "./src",
+		"outDir": "./dist",
+
 		"declaration": true,
-		"declarationDir": "./dist/types",
-		"emitDeclarationOnly": true,
 
 		/* Ensure that each file can be safely transpiled without relying on other imports. */
 		"isolatedModules": true,

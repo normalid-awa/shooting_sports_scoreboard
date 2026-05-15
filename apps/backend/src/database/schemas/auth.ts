@@ -1,93 +1,79 @@
-import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { Cascade, defineEntity, InferEntity, p } from "@mikro-orm/core";
 
-export const user = pgTable("user", {
-	id: text("id").primaryKey(),
-	name: text("name").notNull(),
-	email: text("email").notNull().unique(),
-	emailVerified: boolean("email_verified").default(false).notNull(),
-	image: text("image"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => /* @__PURE__ */ new Date())
-		.notNull(),
+export const UserSchema = defineEntity({
+	name: "User",
+	properties: {
+		id: p.uuid().primary(),
+		name: p.string(),
+		email: p.string().unique(),
+		emailVerified: p.boolean().default(false),
+		image: p.string().nullable(),
+		createdAt: p.datetime().onCreate(() => new Date()),
+		updatedAt: p
+			.datetime()
+			.onCreate(() => new Date())
+			.onUpdate(() => new Date()),
+	},
 });
 
-export const session = pgTable(
-	"session",
-	{
-		id: text("id").primaryKey(),
-		expiresAt: timestamp("expires_at").notNull(),
-		token: text("token").notNull().unique(),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at")
-			.$onUpdate(() => /* @__PURE__ */ new Date())
-			.notNull(),
-		ipAddress: text("ip_address"),
-		userAgent: text("user_agent"),
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
+export type User = InferEntity<typeof UserSchema>;
+
+export const SessionSchema = defineEntity({
+	name: "Session",
+	properties: {
+		id: p.uuid().primary(),
+		expiresAt: p.datetime(),
+		token: p.string().unique(),
+		createdAt: p.datetime().onCreate(() => new Date()),
+		updatedAt: p
+			.datetime()
+			.onCreate(() => new Date())
+			.onUpdate(() => new Date()),
+		ipAddress: p.string().nullable(),
+		userAgent: p.string().nullable(),
+		user: () => p.manyToOne(UserSchema).cascade(Cascade.REMOVE),
 	},
-	(table) => [index("session_userId_idx").on(table.userId)],
-);
+});
 
-export const account = pgTable(
-	"account",
-	{
-		id: text("id").primaryKey(),
-		accountId: text("account_id").notNull(),
-		providerId: text("provider_id").notNull(),
-		userId: text("user_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		accessToken: text("access_token"),
-		refreshToken: text("refresh_token"),
-		idToken: text("id_token"),
-		accessTokenExpiresAt: timestamp("access_token_expires_at"),
-		refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
-		scope: text("scope"),
-		password: text("password"),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at")
-			.$onUpdate(() => /* @__PURE__ */ new Date())
-			.notNull(),
+export type Session = InferEntity<typeof SessionSchema>;
+
+export const AccountSchema = defineEntity({
+	name: "Account",
+	properties: {
+		id: p.uuid().primary(),
+		accountId: p.string(),
+		providerId: p.string(),
+		user: () => p.manyToOne(UserSchema).cascade(Cascade.REMOVE),
+		accessToken: p.string().nullable(),
+		refreshToken: p.string().nullable(),
+		idToken: p.string().nullable(),
+		accessTokenExpiresAt: p.datetime().nullable(),
+		refreshTokenExpiresAt: p.datetime().nullable(),
+		scope: p.string().nullable(),
+		password: p.string().nullable(),
+		createdAt: p.datetime().onCreate(() => new Date()),
+		updatedAt: p
+			.datetime()
+			.onCreate(() => new Date())
+			.onUpdate(() => new Date()),
 	},
-	(table) => [index("account_userId_idx").on(table.userId)],
-);
+});
 
-export const verification = pgTable(
-	"verification",
-	{
-		id: text("id").primaryKey(),
-		identifier: text("identifier").notNull(),
-		value: text("value").notNull(),
-		expiresAt: timestamp("expires_at").notNull(),
-		createdAt: timestamp("created_at").defaultNow().notNull(),
-		updatedAt: timestamp("updated_at")
-			.defaultNow()
-			.$onUpdate(() => /* @__PURE__ */ new Date())
-			.notNull(),
+export type Account = InferEntity<typeof AccountSchema>;
+
+export const VerificationSchema = defineEntity({
+	name: "Verification",
+	properties: {
+		id: p.uuid().primary(),
+		identifier: p.string(),
+		value: p.string(),
+		expiresAt: p.datetime(),
+		createdAt: p.datetime().onCreate(() => new Date()),
+		updatedAt: p
+			.datetime()
+			.onCreate(() => new Date())
+			.onUpdate(() => new Date()),
 	},
-	(table) => [index("verification_identifier_idx").on(table.identifier)],
-);
+});
 
-export const userRelations = relations(user, ({ many }) => ({
-	sessions: many(session),
-	accounts: many(account),
-}));
-
-export const sessionRelations = relations(session, ({ one }) => ({
-	user: one(user, {
-		fields: [session.userId],
-		references: [user.id],
-	}),
-}));
-
-export const accountRelations = relations(account, ({ one }) => ({
-	user: one(user, {
-		fields: [account.userId],
-		references: [user.id],
-	}),
-}));
+export type Verification = InferEntity<typeof VerificationSchema>;

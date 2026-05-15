@@ -1,8 +1,8 @@
-import Elysia from "elysia";
-import { auth } from "./auth";
-import { authMarco } from "./marco";
+import { Elysia } from "elysia";
+import { auth } from "./auth.js";
+import { authMarco } from "./marco.js";
 import * as v from "valibot";
-import addtionalValidators from "@/validators";
+import addtionalValidators from "@/validators.js";
 import { env } from "cloudflare:workers";
 
 export const authRoutes = new Elysia({
@@ -26,7 +26,10 @@ export const authRoutes = new Elysia({
 			body: v.objectAsync({
 				avatar: v.pipeAsync(
 					v.file(),
-					addtionalValidators.checkFileAsync(["image/jpeg", "image/gif", "image/png"], 0.5),
+					addtionalValidators.checkFileAsync(
+						["image/jpeg", "image/gif", "image/png"],
+						0.5,
+					),
 				),
 			}),
 		},
