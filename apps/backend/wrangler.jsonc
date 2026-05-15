@@ -45,4 +45,10 @@
 			"bucket_name": "shooting-sports-scoreboard-public-bucket",
 		},
 	],
+	"hyperdrive": [
+		{
+			"binding": "HYPERDRIVE",
+			"id": "<HYPERDRIVE_ID>",
+		},
+	],
 }
