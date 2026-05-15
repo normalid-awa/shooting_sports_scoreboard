@@ -1,6 +1,9 @@
 import { ormMarco } from "@/database/marcos.js";
 import { ShooterProfileSchema } from "@/database/schemas/shooterProfiles.js";
-import { createLogicalFilterSchema } from "@/utils/filters.js";
+import {
+	createLogicalFilterSchema,
+	whereClauseFromFilter,
+} from "@/utils/filters.js";
 import { createPaginationQuerySchema } from "@/utils/paginations.js";
 import { Sports } from "@shooting_sports_scoreboard/common";
 import { Elysia } from "elysia";
@@ -29,7 +32,7 @@ export const shooterProfilesRoute = new Elysia({
 		async ({ body, em }) => {
 			return await em.findAndPagination(
 				ShooterProfileSchema,
-				{},
+				whereClauseFromFilter(body?.filter),
 				{
 					orderBy: "name",
 					order: "desc",
@@ -48,7 +51,7 @@ export const shooterProfilesRoute = new Elysia({
 					}),
 					filter: createLogicalFilterSchema({
 						name: {
-							ops: ["like"],
+							ops: ["like", "eq", "in", "nin"],
 							schema: v.string(),
 						},
 						sport: {
