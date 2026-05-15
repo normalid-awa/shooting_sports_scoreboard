@@ -3,6 +3,7 @@ import Schemas from "./database/schemas/index.js";
 import "dotenv/config";
 import compiledFunctions from "./database/compiled.js";
 import { Migrator } from "@mikro-orm/migrations";
+import { EntityManagerWithPagination } from "./utils/paginations.js";
 
 export default defineConfig({
 	compiledFunctions,
@@ -13,4 +14,5 @@ export default defineConfig({
 	},
 	extensions: [Migrator],
 	debug: true,
+	entityManager: EntityManagerWithPagination,
 });
