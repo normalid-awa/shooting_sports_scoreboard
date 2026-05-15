@@ -1,13 +1,13 @@
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
-import { authRoutes } from "./modules/auth/routes";
-import { authMarco } from "./modules/auth/marco";
+import { authRoutes } from "./modules/auth/routes.js";
+import { authMarco } from "./modules/auth/marco.js";
 import "@valibot/i18n/zh-TW";
 import { env } from "cloudflare:workers";
 import * as v from "valibot";
-import { r2Routes } from "./modules/r2/routes";
-import additionalValidators from "./validators";
-import { shooterProfilesRoute } from "./modules/shooterProfiles/route";
+import { r2Routes } from "./modules/r2/routes.js";
+import additionalValidators from "./validators.js";
+import { shooterProfilesRoute } from "./modules/shooterProfiles/route.js";
 
 v.setGlobalConfig({ lang: "zh-TW" });
 
@@ -48,7 +48,10 @@ const app = new Elysia({
 		async ({ body }) => {
 			console.log(body.selected);
 			const k = body.d;
-			const result = await env.publicBucket.put(`public/test/${k}`, body.selected);
+			const result = await env.publicBucket.put(
+				`public/test/${k}`,
+				body.selected,
+			);
 			console.log(await env.publicBucket.head(k), result);
 			console.log(await env.publicBucket.list());
 			console.log(await env.publicBucket.get(k));
@@ -58,7 +61,10 @@ const app = new Elysia({
 			body: v.objectAsync({
 				selected: v.pipeAsync(
 					v.file(),
-					additionalValidators.checkFileAsync(["image/jpeg", "image/gif", "image/png"], 10),
+					additionalValidators.checkFileAsync(
+						["image/jpeg", "image/gif", "image/png"],
+						10,
+					),
 				),
 				d: v.string(),
 			}),

@@ -1,8 +1,7 @@
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { env } from "cloudflare:workers";
-import orm from "@/orm";
-import * as authTables from "@/database/schemas/auth";
+import orm from "@/database/orm.js";
+import { mikroOrmAdapter } from "better-auth-mikro-orm";
 
 export const auth = () =>
 	betterAuth({
@@ -19,18 +18,12 @@ export const auth = () =>
 				sameSite: "none",
 				secure: true,
 			},
+			database: {
+				generateId: false,
+			},
 		},
 		appName: "Shooting Sports Scoreboard",
-		database: drizzleAdapter(orm(), {
-			provider: "pg",
-			transaction: true,
-			schema: {
-				account: authTables.account,
-				session: authTables.session,
-				user: authTables.user,
-				verification: authTables.verification,
-			},
-		}),
+		database: mikroOrmAdapter(orm()),
 		emailAndPassword: {
 			enabled: true,
 			autoSignIn: true,

@@ -1,25 +1,5 @@
-import {
-	and,
-	between,
-	Column,
-	eq,
-	gt,
-	gte,
-	ilike,
-	inArray,
-	like,
-	lt,
-	lte,
-	ne,
-	notBetween,
-	notIlike,
-	notInArray,
-	notLike,
-	or,
-	SQL,
-	BinaryOperator as SqlUnaryOperator,
-} from "drizzle-orm";
-import { PgSelect, PgTableWithColumns } from "drizzle-orm/pg-core";
+import { FilterQuery } from "@mikro-orm/core";
+import { InferEntityProperties } from "@mikro-orm/postgresql";
 import * as v from "valibot";
 
 const logicalOperator = v.union([v.literal("and"), v.literal("or")] as const);
@@ -33,9 +13,7 @@ const unaryOperator = v.union([
 	v.literal("lt"),
 	v.literal("lte"),
 	v.literal("like"),
-	v.literal("nlike"),
 	v.literal("ilike"),
-	v.literal("nilike"),
 	v.literal("fulltext"),
 ] as const);
 export type UnaryOperator = v.InferInput<typeof unaryOperator>;
@@ -153,19 +131,6 @@ export type LogicalFilter<Fields extends FilterableFields> = {
 			  >;
 	};
 };
-
-function isUnaryOperator(operator: string): operator is UnaryOperator {
-	return unaryOperator.options.some((o) => o.literal === operator);
-}
-
-function isBinaryOperator(operator: string): operator is BinaryOperator {
-	return binaryOperator.options.some((o) => o.literal === operator);
-}
-
-function isPolyadicOperator(operator: string): operator is PolyadicOperator {
-	return polyadicOperator.options.some((o) => o.literal === operator);
-}
-
 export function createLogicalFilterSchema<
 	const Fields extends FilterableFields,
 >(
@@ -211,37 +176,32 @@ export function createLogicalFilterSchema<
 	);
 }
 
-const unaryOperatorsMap: Record<
-	string,
-	SqlUnaryOperator | ((column: Column<any>, value: any) => SQL)
-> = {
-	eq: eq,
-	ne: ne,
-	gt: gt,
-	gte: gte,
-	lt: lt,
-	lte: lte,
-	like: like,
-	nlike: notLike,
-	ilike: ilike,
-	nilike: notIlike,
-};
+function isUnaryOperator(operator: string): operator is UnaryOperator {
+	return unaryOperator.options.some((o) => o.literal === operator);
+}
 
-const binaryOperatorsMap: Record<
-	string,
-	(column: Column<any>, value1: any, value2: any) => SQL
-> = {
-	btw: between,
-	nbtw: notBetween,
-};
+function isBinaryOperator(operator: string): operator is BinaryOperator {
+	return binaryOperator.options.some((o) => o.literal === operator);
+}
 
-const polyadicOperatorsMap: Record<
-	string,
-	(column: Column<any>, values: any[]) => SQL
-> = {
-	in: inArray,
-	nin: notInArray,
-};
+function isPolyadicOperator(operator: string): operator is PolyadicOperator {
+	return polyadicOperator.options.some((o) => o.literal === operator);
+}
+
+function isLogicalFilter(filter: Filters): filter is LogicalFilter<any> {
+	return (
+		typeof filter === "object" && "logic" in filter && "conditions" in filter
+	);
+}
+
+function isValueFilter(
+	filters: Filters,
+): filters is
+	| UnaryFilter<string, any, any>
+	| BinaryFilter<string, any, any>
+	| PolyadicFilter<string, any, any> {
+	return !isLogicalFilter(filters);
+}
 
 type Filters =
 	| LogicalFilter<any>
@@ -249,61 +209,37 @@ type Filters =
 	| BinaryFilter<string, any, any>
 	| PolyadicFilter<string, any, any>;
 
-export function applyFilter(
-	schema: PgTableWithColumns<any>,
-	filter: Filters | Filters[],
-): SQL<unknown>[] {
-	const filters: SQL<unknown>[] = [];
+export function whereClauseFromFilter(
+	filter?: LogicalFilter<InferEntityProperties<any>> | Filters,
+): FilterQuery<NoInfer<any>> | {} {
+	if (!filter) {
+		return {};
+	}
 
-	if ("logic" in filter) {
-		switch (filter.logic) {
-			case "and":
-				filters.push(
-					and(...applyFilter(schema, filter.conditions as Filters[]))!,
-				);
-				break;
-			case "or":
-				filters.push(
-					or(...applyFilter(schema, filter.conditions as Filters[]))!,
-				);
-				break;
+	if (isLogicalFilter(filter)) {
+		if (filter.logic === "and") {
+			return {
+				$and: Object.values(filter.conditions).map((c) =>
+					whereClauseFromFilter(c),
+				),
+			};
+		} else if (filter.logic === "or") {
+			return {
+				$or: Object.values(filter.conditions).map((c) =>
+					whereClauseFromFilter(c),
+				),
+			};
 		}
-	} else if (Array.isArray(filter)) {
-		filters.push(...filter.map((f) => applyFilter(schema, f)).flat());
-	} else {
-		if (isUnaryOperator(filter.operator)) {
-			filters.push(
-				unaryOperatorsMap[filter.operator](schema[filter.field], filter.value),
-			);
-		} else if (isBinaryOperator(filter.operator)) {
-			filters.push(
-				binaryOperatorsMap[filter.operator](
-					schema[filter.field],
-					filter.value[0],
-					filter.value[1],
-				),
-			);
-		} else if (isPolyadicOperator(filter.operator)) {
-			filters.push(
-				polyadicOperatorsMap[filter.operator](
-					schema[filter.field],
-					filter.value,
-				),
-			);
+	} else if (isValueFilter(filter)) {
+		const { field, operator, value } = filter;
+		if (isUnaryOperator(operator)) {
+			return { [field]: { [`$${operator}`]: value } };
+		} else if (isBinaryOperator(operator)) {
+			return { [field]: { [`$${operator}`]: value } };
+		} else if (isPolyadicOperator(operator)) {
+			return { [field]: { [`$${operator}`]: value } };
 		}
 	}
 
-	return filters;
-}
-
-export function withFilters<
-	const QueryBuilder extends PgSelect,
-	const Schema extends PgTableWithColumns<any>,
->(
-	queryBuilder: QueryBuilder,
-	schema: Schema,
-	filter?: LogicalFilter<Schema["_"]["columns"]>,
-) {
-	if (filter) return queryBuilder.where(and(...applyFilter(schema, filter)));
-	return queryBuilder;
+	throw new Error("Unsupported Operation/Filter");
 }
