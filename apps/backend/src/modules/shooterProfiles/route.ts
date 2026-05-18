@@ -9,11 +9,13 @@ import { Sports } from "@shooting_sports_scoreboard/common";
 import { Elysia } from "elysia";
 import * as v from "valibot";
 import { serialize } from "@mikro-orm/core";
+import { authMarco } from "../auth/marco.js";
 
 export const shooterProfilesRoute = new Elysia({
-	prefix: "shooter-profiles",
+	prefix: "shooter-profile",
 })
 	.use(ormMarco)
+	.use(authMarco)
 	.get(
 		"/:id",
 		async ({ params: { id }, em, status }) => {
@@ -61,5 +63,21 @@ export const shooterProfilesRoute = new Elysia({
 					}),
 				}),
 			),
+		},
+	)
+	.delete(
+		"/:id",
+		async ({ params: { id }, em, status, user }) => {
+			const shooterProfile = await em.findOne(ShooterProfileSchema, id);
+			if (!shooterProfile) return status(404);
+			if (shooterProfile.user?.id !== user.id) return status(403);
+			await em.remove(shooterProfile).flush();
+			return status(204);
+		},
+		{
+			params: v.object({
+				id: v.pipe(v.string(), v.uuid()),
+			}),
+			auth: true,
 		},
 	);

@@ -2,9 +2,9 @@ import { Cascade, defineEntity, InferEntity, p } from "@mikro-orm/core";
 import { ShooterProfileSchema } from "./shooterProfiles.js";
 
 export const UserSchema = defineEntity({
-	name: "User",
+	name: "user",
 	properties: {
-		id: p.uuid().primary(),
+		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
 		name: p.string(),
 		email: p.string().unique(),
 		emailVerified: p.boolean().default(false),
@@ -23,9 +23,9 @@ export const UserSchema = defineEntity({
 export type User = InferEntity<typeof UserSchema>;
 
 export const SessionSchema = defineEntity({
-	name: "Session",
+	name: "session",
 	properties: {
-		id: p.uuid().primary(),
+		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
 		expiresAt: p.datetime(),
 		token: p.string().unique(),
 		createdAt: p.datetime().onCreate(() => new Date()),
@@ -42,9 +42,9 @@ export const SessionSchema = defineEntity({
 export type Session = InferEntity<typeof SessionSchema>;
 
 export const AccountSchema = defineEntity({
-	name: "Account",
+	name: "account",
 	properties: {
-		id: p.uuid().primary(),
+		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
 		accountId: p.string(),
 		providerId: p.string(),
 		user: () => p.manyToOne(UserSchema).cascade(Cascade.REMOVE),
@@ -66,9 +66,9 @@ export const AccountSchema = defineEntity({
 export type Account = InferEntity<typeof AccountSchema>;
 
 export const VerificationSchema = defineEntity({
-	name: "Verification",
+	name: "verification",
 	properties: {
-		id: p.uuid().primary(),
+		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
 		identifier: p.string(),
 		value: p.string(),
 		expiresAt: p.datetime(),

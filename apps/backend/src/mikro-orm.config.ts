@@ -4,6 +4,7 @@ import {
 	Dictionary,
 	Configuration,
 	defineConfig,
+	MetadataProvider,
 } from "@mikro-orm/sql";
 import { Migrator } from "@mikro-orm/migrations";
 import Schemas from "./database/schemas/index.js";

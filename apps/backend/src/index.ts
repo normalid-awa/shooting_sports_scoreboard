@@ -8,6 +8,7 @@ import * as v from "valibot";
 import { r2Routes } from "./modules/r2/routes.js";
 import additionalValidators from "./validators.js";
 import { shooterProfilesRoute } from "./modules/shooterProfiles/route.js";
+import { userRoutes } from "./modules/user/routes.js";
 
 v.setGlobalConfig({ lang: "zh-TW" });
 
@@ -16,6 +17,7 @@ const app = new Elysia({
 })
 	.use(authRoutes)
 	.use(r2Routes)
+	.use(userRoutes)
 	.use(shooterProfilesRoute)
 	.use(authMarco)
 	.get("/", ({ set }) => {

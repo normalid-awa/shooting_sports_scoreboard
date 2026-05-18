@@ -83,7 +83,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "gen_random_uuid()",
           "comment": null,
           "enumItems": [],
           "mappedType": "uuid"
@@ -292,7 +292,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "gen_random_uuid()",
           "comment": null,
           "enumItems": [],
           "mappedType": "uuid"
@@ -431,7 +431,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "gen_random_uuid()",
           "comment": null,
           "enumItems": [],
           "mappedType": "uuid"
@@ -617,7 +617,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "gen_random_uuid()",
           "comment": null,
           "enumItems": [],
           "mappedType": "uuid"
@@ -744,7 +744,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": null,
+          "default": "gen_random_uuid()",
           "comment": null,
           "enumItems": [],
           "mappedType": "uuid"

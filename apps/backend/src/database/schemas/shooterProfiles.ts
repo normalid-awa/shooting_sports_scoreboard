@@ -3,14 +3,14 @@ import { Sports } from "@shooting_sports_scoreboard/common";
 import { UserSchema } from "./auth.js";
 
 export const ShooterProfileSchema = defineEntity({
-	name: "ShooterProfile",
+	name: "shooterProfile",
 	uniques: [
 		{
 			properties: ["sport", "identifier"],
 		},
 	],
 	properties: {
-		id: p.uuid().primary(),
+		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
 		name: p.string().nullable(),
 		sport: p.enum(() => Sports),
 		identifier: p.string(),
