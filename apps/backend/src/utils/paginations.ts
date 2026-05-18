@@ -33,9 +33,40 @@ export function createPaginationQuerySchema<const T extends readonly string[]>(
 	);
 }
 
+type PaginationQuery<OrderByKey> = {
+	orderBy: OrderByKey;
+	order: "asc" | "desc";
+	limit: number;
+	page: number;
+};
+
 // TODO: convert this into a mixin pattern, but it's hard,
 // as youll have to staticly type everything otherwise ts(2883) will be thrown
 export class EntityManagerWithPagination extends EntityManager {
+	wrapPaginatedResult<T>(
+		result: T,
+		totalItem: number,
+		pagination: Pick<PaginationQuery<any>, "limit" | "page">,
+	): {
+		data: T;
+		pagination: {
+			total: number;
+			totalPages: number;
+			hasNextPage: boolean;
+			hasPreviousPage: boolean;
+		};
+	} {
+		return {
+			data: result,
+			pagination: {
+				total: totalItem,
+				totalPages: Math.ceil(totalItem / pagination.limit),
+				hasNextPage: totalItem > pagination.limit * pagination.page,
+				hasPreviousPage: pagination.page > 1,
+			},
+		};
+	}
+
 	async findAndPagination<
 		Entity extends object,
 		Hint extends string = never,
@@ -44,18 +75,8 @@ export class EntityManagerWithPagination extends EntityManager {
 	>(
 		entityName: EntityName<Entity>,
 		where: FilterQuery<NoInfer<Entity>>,
-		defaultPagination: {
-			orderBy: keyof Entity;
-			order: "asc" | "desc";
-			limit: number;
-			page: number;
-		},
-		pagination?: {
-			orderBy?: keyof Entity;
-			order?: "asc" | "desc";
-			limit?: number;
-			page?: number;
-		},
+		defaultPagination: PaginationQuery<keyof Entity>,
+		pagination?: Partial<PaginationQuery<keyof Entity>>,
 		options?: FindOptions<Entity, Hint, Fields, Excludes>,
 	): Promise<{
 		data: SerializeDTO<
@@ -83,19 +104,9 @@ export class EntityManagerWithPagination extends EntityManager {
 			},
 		});
 
-		return {
-			data: serialize(result),
-			pagination: {
-				total: count,
-				totalPages: Math.ceil(
-					count / (pagination?.limit || defaultPagination.limit),
-				),
-				hasNextPage:
-					count >
-					(pagination?.limit || defaultPagination.limit) *
-						(pagination?.page || defaultPagination.page),
-				hasPreviousPage: (pagination?.page || defaultPagination.page) > 1,
-			},
-		};
+		return this.wrapPaginatedResult(serialize(result), count, {
+			limit: pagination?.limit || defaultPagination.limit,
+			page: pagination?.page || defaultPagination.page,
+		});
 	}
 }
