@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TimerRouteImport } from './routes/timer'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShooterProfilesIndexRouteImport } from './routes/shooter-profiles/index'
 import { Route as AccountManagementRouteImport } from './routes/account/management'
 
 const TimerRoute = TimerRouteImport.update({
@@ -29,6 +30,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShooterProfilesIndexRoute = ShooterProfilesIndexRouteImport.update({
+  id: '/shooter-profiles/',
+  path: '/shooter-profiles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountManagementRoute = AccountManagementRouteImport.update({
   id: '/management',
   path: '/management',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRouteWithChildren
   '/timer': typeof TimerRoute
   '/account/management': typeof AccountManagementRoute
+  '/shooter-profiles/': typeof ShooterProfilesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRouteWithChildren
   '/timer': typeof TimerRoute
   '/account/management': typeof AccountManagementRoute
+  '/shooter-profiles': typeof ShooterProfilesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,19 +61,32 @@ export interface FileRoutesById {
   '/account': typeof AccountRouteWithChildren
   '/timer': typeof TimerRoute
   '/account/management': typeof AccountManagementRoute
+  '/shooter-profiles/': typeof ShooterProfilesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/account' | '/timer' | '/account/management'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/timer'
+    | '/account/management'
+    | '/shooter-profiles/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/timer' | '/account/management'
-  id: '__root__' | '/' | '/account' | '/timer' | '/account/management'
+  to: '/' | '/account' | '/timer' | '/account/management' | '/shooter-profiles'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/timer'
+    | '/account/management'
+    | '/shooter-profiles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRouteWithChildren
   TimerRoute: typeof TimerRoute
+  ShooterProfilesIndexRoute: typeof ShooterProfilesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -89,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shooter-profiles/': {
+      id: '/shooter-profiles/'
+      path: '/shooter-profiles'
+      fullPath: '/shooter-profiles/'
+      preLoaderRoute: typeof ShooterProfilesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/management': {
@@ -116,6 +144,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRouteWithChildren,
   TimerRoute: TimerRoute,
+  ShooterProfilesIndexRoute: ShooterProfilesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

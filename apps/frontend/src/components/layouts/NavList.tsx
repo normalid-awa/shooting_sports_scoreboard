@@ -6,12 +6,18 @@ import ListItemText from "@mui/material/ListItemText";
 import { linkOptions } from "@tanstack/react-router";
 import HomeIcon from "@mui/icons-material/Home";
 import TimerIcon from "@mui/icons-material/Timer";
+import PeopleIcon from "@mui/icons-material/People";
 
 const links = linkOptions([
 	{
 		to: "/",
 		label: "Home",
 		icon: <HomeIcon />,
+	},
+	{
+		to: "/shooter-profiles",
+		label: "Shooter Profiles",
+		icon: <PeopleIcon />,
 	},
 	{
 		to: "/timer",
@@ -22,7 +28,7 @@ const links = linkOptions([
 
 export default function NavList(props: { onNav?: () => void }) {
 	return (
-		<List component="nav" sx={{ width: 200 }} disablePadding>
+		<List component="nav" sx={{ width: 220 }} disablePadding>
 			{links.map((link) => (
 				<ListItemButton
 					key={link.to}

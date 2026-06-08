@@ -25,6 +25,10 @@ const config = defineConfig((confEnv) => {
 					rewrite: (path) => path.replace(/\/api/, ""),
 				},
 			},
+			hmr: {
+				protocol: "wss",
+				host: env.VITE_HMR_HOST,
+			},
 		},
 		resolve: {
 			tsconfigPaths: true,
