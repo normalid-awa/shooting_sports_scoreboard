@@ -45,6 +45,7 @@ export const userRoutes = new Elysia({
 				sport: body.sport,
 				identifier: body.identifier,
 				user: user.id,
+				name: body.name!,
 			});
 			await em.persist(shooterProfile).flush();
 			return wrap(shooterProfile).toObject();

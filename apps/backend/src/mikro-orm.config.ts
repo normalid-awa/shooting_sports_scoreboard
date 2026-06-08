@@ -4,8 +4,7 @@ import {
 	Dictionary,
 	Configuration,
 	defineConfig,
-	MetadataProvider,
-} from "@mikro-orm/sql";
+} from "@mikro-orm/postgresql";
 import { Migrator } from "@mikro-orm/migrations";
 import Schemas from "./database/schemas/index.js";
 import compiledFunctions from "./database/compiled.js";
@@ -47,5 +46,7 @@ export default defineConfig({
 	extensions: [Migrator],
 	debug: true,
 	entityManager: EntityManagerWithPagination,
-	driver: isOnWorker() ? HyperdriveDriver : PostgreSqlDriver,
+	driver: isOnWorker()
+		? (HyperdriveDriver as unknown as typeof PostgreSqlDriver)
+		: PostgreSqlDriver,
 });
