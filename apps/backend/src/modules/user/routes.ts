@@ -1,11 +1,11 @@
 import { ormMarco } from "@/database/marcos.js";
-import { UserSchema } from "@/database/schemas/auth.js";
+import { User } from "@/database/schemas/auth.js";
 import { wrap } from "@mikro-orm/core";
 import { Elysia, status } from "elysia";
 import * as v from "valibot";
 import { authMarco } from "../auth/marco.js";
 import { Sports } from "@shooting_sports_scoreboard/common";
-import { ShooterProfileSchema } from "@/database/schemas/shooterProfiles.js";
+import { ShooterProfile } from "@/database/schemas/shooterProfiles.js";
 
 export const userRoutes = new Elysia({
 	prefix: "/user",
@@ -15,7 +15,7 @@ export const userRoutes = new Elysia({
 	.get(
 		"/:id",
 		async ({ em, params: { id } }) => {
-			const user = await em.findOne(UserSchema, id, {
+			const user = await em.findOne(User, id, {
 				populate: ["shooterProfiles"],
 			});
 			if (!user) return status(404);
@@ -31,7 +31,7 @@ export const userRoutes = new Elysia({
 		"/shooter-profile/create",
 		async ({ em, body, user }) => {
 			const isProfileExists =
-				(await em.count(ShooterProfileSchema, {
+				(await em.count(ShooterProfile, {
 					$and: [{ sport: body.sport }, { identifier: body.identifier }],
 				})) == 1;
 
@@ -41,7 +41,7 @@ export const userRoutes = new Elysia({
 					`Identifier ${body.identifier} already exists for sport ${body.sport}`,
 				);
 
-			const shooterProfile = em.create(ShooterProfileSchema, {
+			const shooterProfile = em.create(ShooterProfile, {
 				sport: body.sport,
 				identifier: body.identifier,
 				user: user.id,

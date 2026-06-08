@@ -13,7 +13,7 @@
 		"test": "vitest",
 		"cf-typegen": "wrangler types",
 		"build": "tsc",
-		"compile-orm": "mikro-orm compile --out ./src/database/compiled.js"
+		"compile-orm": "npx mikro-orm cache:generate --combined && mikro-orm compile --out ./src/database/compiled.js"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.12.4",
@@ -27,8 +27,10 @@
 	},
 	"dependencies": {
 		"@mikro-orm/core": "^7.0.16",
+		"@mikro-orm/decorators": "^7.1.4",
 		"@mikro-orm/migrations": "^7.0.16",
 		"@mikro-orm/postgresql": "^7.0.16",
+		"@mikro-orm/reflection": "^7.1.4",
 		"@shooting_sports_scoreboard/common": "*",
 		"@valibot/i18n": "^1.1.0",
 		"better-auth": "^1.6.2",

@@ -475,7 +475,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "unique": true,
+          "unique": false,
           "length": null,
           "precision": null,
           "scale": null,
@@ -516,17 +516,6 @@
           "constraint": true,
           "keyName": "shooter_profile_pkey",
           "primary": true,
-          "unique": true
-        },
-        {
-          "columnNames": [
-            "sport",
-            "identifier"
-          ],
-          "composite": true,
-          "constraint": true,
-          "keyName": "shooter_profile_sport_identifier_unique",
-          "primary": false,
           "unique": true
         }
       ],
@@ -600,7 +589,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "false",
+          "default": null,
           "comment": null,
           "enumItems": [],
           "mappedType": "boolean"

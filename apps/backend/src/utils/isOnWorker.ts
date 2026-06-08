@@ -1,7 +1,3 @@
-let isOnWorker = () => {
-	const result = navigator.userAgent === "Cloudflare-Workers";
-	isOnWorker = () => result;
-	return result;
-};
+const isOnWorker = () => navigator.userAgent === "Cloudflare-Workers";
 
 export default isOnWorker;

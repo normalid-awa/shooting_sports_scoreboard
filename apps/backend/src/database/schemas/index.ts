@@ -1,15 +1,10 @@
-import {
-	AccountSchema,
-	SessionSchema,
-	UserSchema,
-	VerificationSchema,
-} from "./auth.js";
-import { ShooterProfileSchema } from "./shooterProfiles.js";
+import { Account, Session, User, Verification } from "./auth.js";
+import { ShooterProfile } from "./shooterProfiles.js";
 
 export default {
-	AccountSchema,
-	SessionSchema,
-	UserSchema,
-	VerificationSchema,
-	ShooterProfileSchema,
+	Account,
+	Session,
+	User,
+	Verification,
+	ShooterProfile,
 };

@@ -1,5 +1,5 @@
 import { ormMarco } from "@/database/marcos.js";
-import { ShooterProfileSchema } from "@/database/schemas/shooterProfiles.js";
+import { ShooterProfile } from "@/database/schemas/shooterProfiles.js";
 import {
 	createLogicalFilterSchema,
 	whereClauseFromFilter,
@@ -28,7 +28,7 @@ const guardCreateShooterProfile: GuardFunction<
 	excludeShooterProfileId?: string,
 ) => {
 	if (
-		(await em.count(ShooterProfileSchema, {
+		(await em.count(ShooterProfile, {
 			user: userId,
 			sport: body.sport,
 			id: { $ne: excludeShooterProfileId },
@@ -37,7 +37,7 @@ const guardCreateShooterProfile: GuardFunction<
 		return [403, `You already has a shooter profile for sport ${body.sport}.`];
 
 	if (
-		(await em.count(ShooterProfileSchema, {
+		(await em.count(ShooterProfile, {
 			identifier: body.identifier,
 			sport: body.sport,
 			id: { $ne: excludeShooterProfileId },
@@ -57,7 +57,7 @@ export const shooterProfilesRoute = new Elysia({
 	.get(
 		"/:id",
 		async ({ params: { id }, em, status }) => {
-			const shooterProfile = await em.findOne(ShooterProfileSchema, id, {
+			const shooterProfile = await em.findOne(ShooterProfile, id, {
 				populate: ["user"],
 			});
 			if (!shooterProfile) return status(404);
@@ -72,7 +72,7 @@ export const shooterProfilesRoute = new Elysia({
 	.get(
 		"/self",
 		async ({ em, user, status }) => {
-			const shooterProfile = await em.find(ShooterProfileSchema, {
+			const shooterProfile = await em.find(ShooterProfile, {
 				user: user.id,
 			});
 			if (!shooterProfile) return status(404);
@@ -86,7 +86,7 @@ export const shooterProfilesRoute = new Elysia({
 		"/list",
 		async ({ body, em }) => {
 			return await em.findAndPagination(
-				ShooterProfileSchema,
+				ShooterProfile,
 				whereClauseFromFilter(body?.filter),
 				{
 					orderBy: "name",
@@ -130,7 +130,7 @@ export const shooterProfilesRoute = new Elysia({
 		async ({ body, em, status, user }) => {
 			const guardResult = await guardCreateShooterProfile(user.id, em, body);
 			if (guardResult) return status(guardResult[0], guardResult[1]);
-			const shooterProfile = em.create(ShooterProfileSchema, {
+			const shooterProfile = em.create(ShooterProfile, {
 				identifier: body.identifier,
 				name: user.name,
 				sport: body.sport,
@@ -147,7 +147,7 @@ export const shooterProfilesRoute = new Elysia({
 	.put(
 		"/:id",
 		async ({ params: { id }, body, em, status, user }) => {
-			const shooterProfile = await em.findOne(ShooterProfileSchema, id);
+			const shooterProfile = await em.findOne(ShooterProfile, id);
 			if (!shooterProfile) return status(404);
 			if (shooterProfile.user.id !== user.id)
 				return status(403, "You can only update your own shooter profile.");
@@ -175,7 +175,7 @@ export const shooterProfilesRoute = new Elysia({
 	.delete(
 		"/:id",
 		async ({ params: { id }, em, status, user }) => {
-			const shooterProfile = await em.findOne(ShooterProfileSchema, id);
+			const shooterProfile = await em.findOne(ShooterProfile, id);
 			if (!shooterProfile) return status(404);
 			if (shooterProfile.user?.id !== user.id) return status(403);
 			await em.remove(shooterProfile).flush();

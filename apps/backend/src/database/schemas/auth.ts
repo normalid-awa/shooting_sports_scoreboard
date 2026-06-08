@@ -1,84 +1,129 @@
-import { Cascade, defineEntity, InferEntity, p } from "@mikro-orm/core";
-import { ShooterProfileSchema } from "./shooterProfiles.js";
+import { Cascade, Collection } from "@mikro-orm/core";
+import { ShooterProfile } from "./shooterProfiles.js";
+import {
+	Entity,
+	ManyToOne,
+	OneToMany,
+	PrimaryKey,
+	Property,
+} from "@mikro-orm/decorators/es";
 
-export const UserSchema = defineEntity({
-	name: "user",
-	properties: {
-		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
-		name: p.string(),
-		email: p.string().unique(),
-		emailVerified: p.boolean().default(false),
-		image: p.string().nullable(),
-		createdAt: p.datetime().onCreate(() => new Date()),
-		updatedAt: p
-			.datetime()
-			.onCreate(() => new Date())
-			.onUpdate(() => new Date()),
+@Entity()
+export class User {
+	@PrimaryKey({ type: "uuid", defaultRaw: "gen_random_uuid()" })
+	id!: string;
 
-		//custom column
-		shooterProfiles: () => p.oneToMany(ShooterProfileSchema).mappedBy("user"),
-		realname: p.string().nullable(),
-	},
-});
+	@Property()
+	name!: string;
 
-export type User = InferEntity<typeof UserSchema>;
+	@Property({ unique: true })
+	email!: string;
 
-export const SessionSchema = defineEntity({
-	name: "session",
-	properties: {
-		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
-		expiresAt: p.datetime(),
-		token: p.string().unique(),
-		createdAt: p.datetime().onCreate(() => new Date()),
-		updatedAt: p
-			.datetime()
-			.onCreate(() => new Date())
-			.onUpdate(() => new Date()),
-		ipAddress: p.string().nullable(),
-		userAgent: p.string().nullable(),
-		user: () => p.manyToOne(UserSchema).cascade(Cascade.REMOVE),
-	},
-});
+	@Property()
+	emailVerified!: boolean;
 
-export type Session = InferEntity<typeof SessionSchema>;
+	@Property()
+	image?: string;
 
-export const AccountSchema = defineEntity({
-	name: "account",
-	properties: {
-		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
-		accountId: p.string(),
-		providerId: p.string(),
-		user: () => p.manyToOne(UserSchema).cascade(Cascade.REMOVE),
-		accessToken: p.string().nullable(),
-		refreshToken: p.string().nullable(),
-		idToken: p.string().nullable(),
-		accessTokenExpiresAt: p.datetime().nullable(),
-		refreshTokenExpiresAt: p.datetime().nullable(),
-		scope: p.string().nullable(),
-		password: p.string().nullable(),
-		createdAt: p.datetime().onCreate(() => new Date()),
-		updatedAt: p
-			.datetime()
-			.onCreate(() => new Date())
-			.onUpdate(() => new Date()),
-	},
-});
+	@Property({ onCreate: () => new Date() })
+	createdAt!: Date;
 
-export type Account = InferEntity<typeof AccountSchema>;
+	@Property({ onUpdate: () => new Date(), onCreate: () => new Date() })
+	updatedAt!: Date;
 
-export const VerificationSchema = defineEntity({
-	name: "verification",
-	properties: {
-		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
-		identifier: p.string(),
-		value: p.string(),
-		expiresAt: p.datetime(),
-		createdAt: p.datetime().onCreate(() => new Date()),
-		updatedAt: p
-			.datetime()
-			.onCreate(() => new Date())
-			.onUpdate(() => new Date()),
-	},
-});
+	@OneToMany(() => ShooterProfile, (shooterProfile) => shooterProfile.user)
+	shooterProfiles = new Collection<ShooterProfile>(this);
 
-export type Verification = InferEntity<typeof VerificationSchema>;
+	@Property()
+	realname?: string;
+}
+
+@Entity()
+export class Session {
+	@PrimaryKey({ type: "uuid", defaultRaw: "gen_random_uuid()" })
+	id!: string;
+
+	@Property()
+	expiresAt!: Date;
+
+	@Property({ unique: true })
+	token!: string;
+
+	@Property({ onCreate: () => new Date() })
+	createdAt!: Date;
+
+	@Property({ onUpdate: () => new Date(), onCreate: () => new Date() })
+	updatedAt!: Date;
+
+	@Property()
+	ipAddress?: string;
+
+	@Property()
+	userAgent?: string;
+
+	@ManyToOne({ cascade: [Cascade.REMOVE] })
+	user!: User;
+}
+
+@Entity()
+export class Account {
+	@PrimaryKey({ type: "uuid", defaultRaw: "gen_random_uuid()" })
+	id!: string;
+
+	@Property()
+	accountId!: string;
+
+	@Property()
+	providerId!: string;
+
+	@ManyToOne({ cascade: [Cascade.REMOVE] })
+	user!: User;
+
+	@Property()
+	accessToken?: string;
+
+	@Property()
+	refreshToken?: string;
+
+	@Property()
+	idToken?: string;
+
+	@Property()
+	accessTokenExpiresAt?: Date;
+
+	@Property()
+	refreshTokenExpiresAt?: Date;
+
+	@Property()
+	scope?: string;
+
+	@Property()
+	password?: string;
+
+	@Property({ onCreate: () => new Date() })
+	createdAt!: Date;
+
+	@Property({ onUpdate: () => new Date(), onCreate: () => new Date() })
+	updatedAt!: Date;
+}
+
+@Entity()
+export class Verification {
+	@PrimaryKey({ type: "uuid", defaultRaw: "gen_random_uuid()" })
+	id!: string;
+
+	@Property()
+	identifier!: string;
+
+	@Property()
+	value!: string;
+
+	@Property()
+	expiresAt!: Date;
+
+	@Property({ onCreate: () => new Date() })
+	createdAt!: Date;
+
+	@Property({ onUpdate: () => new Date(), onCreate: () => new Date() })
+	updatedAt!: Date;
+}
