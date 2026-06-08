@@ -17,38 +17,30 @@ const createShooterProfileDto = v.object({
 	name: v.string(),
 	sport: v.picklist(Sports),
 	identifier: v.string(),
-	userId: v.optional(v.pipe(v.string(), v.uuid())),
 });
 
 const guardCreateShooterProfile: GuardFunction<
-	[string, EntityManager, v.InferInput<typeof createShooterProfileDto>]
+	[string, EntityManager, v.InferInput<typeof createShooterProfileDto>, string?]
 > = async (
 	userId: string,
 	em: EntityManager,
 	body: v.InferInput<typeof createShooterProfileDto>,
+	excludeShooterProfileId?: string,
 ) => {
-	if (body.userId && userId !== body.userId)
-		return [
-			403,
-			"You are not allowed to create/update shooter profiles for other users.",
-		];
-
 	if (
-		body.userId &&
 		(await em.count(ShooterProfileSchema, {
-			user: body.userId,
+			user: userId,
 			sport: body.sport,
+			id: { $ne: excludeShooterProfileId },
 		})) > 0
 	)
-		return [
-			403,
-			`User ${body.userId} already has a shooter profile for sport ${body.sport}.`,
-		];
+		return [403, `You already has a shooter profile for sport ${body.sport}.`];
 
 	if (
 		(await em.count(ShooterProfileSchema, {
 			identifier: body.identifier,
 			sport: body.sport,
+			id: { $ne: excludeShooterProfileId },
 		})) > 0
 	)
 		return [
@@ -127,15 +119,43 @@ export const shooterProfilesRoute = new Elysia({
 			if (guardResult) return status(guardResult[0], guardResult[1]);
 			const shooterProfile = em.create(ShooterProfileSchema, {
 				identifier: body.identifier,
-				name: body.name,
+				name: user.name,
 				sport: body.sport,
-				user: body.userId,
+				user: user.id,
 			});
 			await em.persist(shooterProfile).flush();
 			return wrap(shooterProfile).toObject();
 		},
 		{
 			auth: true,
+			body: createShooterProfileDto,
+		},
+	)
+	.put(
+		"/:id",
+		async ({ params: { id }, body, em, status, user }) => {
+			const shooterProfile = await em.findOne(ShooterProfileSchema, id);
+			if (!shooterProfile) return status(404);
+			if (shooterProfile.user.id !== user.id)
+				return status(403, "You can only update your own shooter profile.");
+			const guardResult = await guardCreateShooterProfile(
+				user.id,
+				em,
+				body,
+				id,
+			);
+			if (guardResult) return status(guardResult[0], guardResult[1]);
+			shooterProfile.identifier = body.identifier;
+			shooterProfile.name = body.name;
+			shooterProfile.sport = body.sport;
+			await em.persist(shooterProfile).flush();
+			return wrap(shooterProfile).toObject();
+		},
+		{
+			auth: true,
+			params: v.object({
+				id: v.pipe(v.string(), v.uuid()),
+			}),
 			body: createShooterProfileDto,
 		},
 	)

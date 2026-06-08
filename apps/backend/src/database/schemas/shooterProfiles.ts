@@ -15,8 +15,7 @@ export const ShooterProfileSchema = defineEntity({
 		name: p.string(),
 		sport: p.enum(() => Sports),
 		identifier: p.string(),
-		user: () =>
-			p.manyToOne(UserSchema).inversedBy("shooterProfiles").nullable(),
+		user: () => p.manyToOne(UserSchema).inversedBy("shooterProfiles"),
 	},
 });
 

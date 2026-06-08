@@ -496,7 +496,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "unique": false,
           "length": null,
           "precision": null,
@@ -548,8 +548,7 @@
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.user",
-          "deleteRule": "set null"
+          "referencedTableName": "public.user"
         }
       },
       "comment": null

@@ -33,6 +33,12 @@ export const auth = () =>
 				createdAt: "created_at",
 				updatedAt: "updated_at",
 			},
+			additionalFields: {
+				realname: {
+					type: "string",
+					required: false,
+				},
+			},
 		},
 		session: {
 			fields: {

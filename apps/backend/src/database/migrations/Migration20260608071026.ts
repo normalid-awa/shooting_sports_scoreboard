@@ -1,12 +1,12 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20260518134020 extends Migration {
+export class Migration20260608071026 extends Migration {
 
   override up(): void | Promise<void> {
     this.addSql(`create table "user" ("id" uuid not null default gen_random_uuid(), "name" varchar(255) not null, "email" varchar(255) not null, "email_verified" boolean not null default false, "image" varchar(255) null, "created_at" timestamptz not null, "updated_at" timestamptz not null, "realname" varchar(255) null, primary key ("id"));`);
     this.addSql(`alter table "user" add constraint "user_email_unique" unique ("email");`);
 
-    this.addSql(`create table "shooter_profile" ("id" uuid not null default gen_random_uuid(), "name" varchar(255) not null, "sport" text not null, "identifier" varchar(255) not null, "user_id" uuid null, primary key ("id"));`);
+    this.addSql(`create table "shooter_profile" ("id" uuid not null default gen_random_uuid(), "name" varchar(255) not null, "sport" text not null, "identifier" varchar(255) not null, "user_id" uuid not null, primary key ("id"));`);
     this.addSql(`alter table "shooter_profile" add constraint "shooter_profile_sport_identifier_unique" unique ("sport", "identifier");`);
     this.addSql(`alter table "shooter_profile" add constraint "shooter_profile_sport_check" check ("sport" in ('AAIPSC', 'IPSC', 'IDPA', '3-Guns', 'USPSA'));`);
 
@@ -17,7 +17,7 @@ export class Migration20260518134020 extends Migration {
 
     this.addSql(`create table "verification" ("id" uuid not null default gen_random_uuid(), "identifier" varchar(255) not null, "value" varchar(255) not null, "expires_at" timestamptz not null, "created_at" timestamptz not null, "updated_at" timestamptz not null, primary key ("id"));`);
 
-    this.addSql(`alter table "shooter_profile" add constraint "shooter_profile_user_id_foreign" foreign key ("user_id") references "user" ("id") on delete set null;`);
+    this.addSql(`alter table "shooter_profile" add constraint "shooter_profile_user_id_foreign" foreign key ("user_id") references "user" ("id");`);
 
     this.addSql(`alter table "session" add constraint "session_user_id_foreign" foreign key ("user_id") references "user" ("id");`);
 
