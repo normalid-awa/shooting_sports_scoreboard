@@ -17,6 +17,7 @@ export const UserSchema = defineEntity({
 
 		//custom column
 		shooterProfiles: () => p.oneToMany(ShooterProfileSchema).mappedBy("user"),
+		realname: p.string().nullable(),
 	},
 });
 

@@ -11,7 +11,8 @@ export const ShooterProfileSchema = defineEntity({
 	],
 	properties: {
 		id: p.uuid().primary().defaultRaw("gen_random_uuid()"),
-		name: p.string().nullable(),
+		// will be synched with user.realname
+		name: p.string(),
 		sport: p.enum(() => Sports),
 		identifier: p.string(),
 		user: () =>

@@ -104,7 +104,7 @@ export class EntityManagerWithPagination extends EntityManager {
 			},
 		});
 
-		return this.wrapPaginatedResult(serialize(result), count, {
+		return this.wrapPaginatedResult(serialize(result, options || {}), count, {
 			limit: pagination?.limit || defaultPagination.limit,
 			page: pagination?.page || defaultPagination.page,
 		});

@@ -8,8 +8,54 @@ import { createPaginationQuerySchema } from "@/utils/paginations.js";
 import { Sports } from "@shooting_sports_scoreboard/common";
 import { Elysia } from "elysia";
 import * as v from "valibot";
-import { serialize } from "@mikro-orm/core";
+import { wrap } from "@mikro-orm/core";
 import { authMarco } from "../auth/marco.js";
+import { GuardFunction } from "@/utils/guards.types.js";
+import { EntityManager } from "@mikro-orm/sql";
+
+const createShooterProfileDto = v.object({
+	name: v.string(),
+	sport: v.picklist(Sports),
+	identifier: v.string(),
+	userId: v.optional(v.pipe(v.string(), v.uuid())),
+});
+
+const guardCreateShooterProfile: GuardFunction<
+	[string, EntityManager, v.InferInput<typeof createShooterProfileDto>]
+> = async (
+	userId: string,
+	em: EntityManager,
+	body: v.InferInput<typeof createShooterProfileDto>,
+) => {
+	if (body.userId && userId !== body.userId)
+		return [
+			403,
+			"You are not allowed to create/update shooter profiles for other users.",
+		];
+
+	if (
+		body.userId &&
+		(await em.count(ShooterProfileSchema, {
+			user: body.userId,
+			sport: body.sport,
+		})) > 0
+	)
+		return [
+			403,
+			`User ${body.userId} already has a shooter profile for sport ${body.sport}.`,
+		];
+
+	if (
+		(await em.count(ShooterProfileSchema, {
+			identifier: body.identifier,
+			sport: body.sport,
+		})) > 0
+	)
+		return [
+			403,
+			`Identifier ${body.identifier} is already used for sport ${body.sport}.`,
+		];
+};
 
 export const shooterProfilesRoute = new Elysia({
 	prefix: "shooter-profile",
@@ -19,9 +65,11 @@ export const shooterProfilesRoute = new Elysia({
 	.get(
 		"/:id",
 		async ({ params: { id }, em, status }) => {
-			const shooterProfile = await em.findOne(ShooterProfileSchema, id);
+			const shooterProfile = await em.findOne(ShooterProfileSchema, id, {
+				populate: ["user"],
+			});
 			if (!shooterProfile) return status(404);
-			return serialize(shooterProfile);
+			return wrap(shooterProfile).toObject();
 		},
 		{
 			params: v.object({
@@ -42,6 +90,9 @@ export const shooterProfilesRoute = new Elysia({
 					page: 1,
 				},
 				body?.pagination,
+				{
+					populate: ["user"],
+				},
 			);
 		},
 		{
@@ -52,6 +103,10 @@ export const shooterProfilesRoute = new Elysia({
 						max: 20,
 					}),
 					filter: createLogicalFilterSchema({
+						user: {
+							ops: ["eq", "in", "nin", "ne"],
+							schema: v.string(),
+						},
 						name: {
 							ops: ["like", "eq", "in", "nin"],
 							schema: v.string(),
@@ -63,6 +118,25 @@ export const shooterProfilesRoute = new Elysia({
 					}),
 				}),
 			),
+		},
+	)
+	.post(
+		"/",
+		async ({ body, em, status, user }) => {
+			const guardResult = await guardCreateShooterProfile(user.id, em, body);
+			if (guardResult) return status(guardResult[0], guardResult[1]);
+			const shooterProfile = em.create(ShooterProfileSchema, {
+				identifier: body.identifier,
+				name: body.name,
+				sport: body.sport,
+				user: body.userId,
+			});
+			await em.persist(shooterProfile).flush();
+			return wrap(shooterProfile).toObject();
+		},
+		{
+			auth: true,
+			body: createShooterProfileDto,
 		},
 	)
 	.delete(
