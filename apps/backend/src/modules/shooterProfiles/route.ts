@@ -8,7 +8,7 @@ import { createPaginationQuerySchema } from "@/utils/paginations.js";
 import { Sports } from "@shooting_sports_scoreboard/common";
 import { Elysia } from "elysia";
 import * as v from "valibot";
-import { wrap } from "@mikro-orm/core";
+import { serialize, wrap } from "@mikro-orm/core";
 import { authMarco } from "../auth/marco.js";
 import { GuardFunction } from "@/utils/guards.types.js";
 import { EntityManager } from "@mikro-orm/sql";
@@ -67,6 +67,19 @@ export const shooterProfilesRoute = new Elysia({
 			params: v.object({
 				id: v.pipe(v.string(), v.uuid()),
 			}),
+		},
+	)
+	.get(
+		"/self",
+		async ({ em, user, status }) => {
+			const shooterProfile = await em.find(ShooterProfileSchema, {
+				user: user.id,
+			});
+			if (!shooterProfile) return status(404);
+			return serialize(shooterProfile);
+		},
+		{
+			auth: true,
 		},
 	)
 	.post(
