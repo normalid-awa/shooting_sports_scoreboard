@@ -17,7 +17,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useConfirm } from "material-ui-confirm";
 import { createShooterProfileMutation } from "#/apis/shooterProfile";
 
-export function CreateShooterProfileForm() {
+export function CreateShooterProfileForm(props: { onCreated?: () => void }) {
 	const confirm = useConfirm();
 	const createShooterProfile = useMutation(
 		createShooterProfileMutation(confirm),
@@ -39,6 +39,7 @@ export function CreateShooterProfileForm() {
 					region,
 					identifier,
 				});
+				props.onCreated?.();
 			}}
 		>
 			<Grid size={{ xs: 12, md: 12 / 3, sm: 6 }}>
@@ -83,7 +84,12 @@ export function CreateShooterProfileForm() {
 				/>
 			</Grid>
 			<Grid size={12}>
-				<Button type="submit" variant="contained" fullWidth>
+				<Button
+					type="submit"
+					variant="contained"
+					fullWidth
+					loading={createShooterProfile.isPending}
+				>
 					Create
 				</Button>
 			</Grid>
