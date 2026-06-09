@@ -13,6 +13,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
 import { getShooterProfileQuery } from "#/apis/shooterProfile";
 import { ShooterProfileCard } from "#/components/ShooterProfileCard";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export const Route = createFileRoute("/shooter-profiles/self")({
 	component: () => <EnsureAuth component={<RouteComponent />} />,
@@ -30,7 +33,7 @@ function RouteComponent() {
 
 	return (
 		<Container fixed maxWidth="md">
-			<Card sx={{ p: 2, m: 2 }} elevation={5}>
+			<Card sx={{ p: 2, m: 2 }}>
 				<Stack spacing={2}>
 					<Typography variant="h5">My shooter profiles</Typography>
 					<Divider />
@@ -49,11 +52,19 @@ function RouteComponent() {
 					<Button
 						fullWidth
 						variant="outlined"
-						onClick={() =>
+						onClick={() => {
 							setShowCreateShooterProfileModal(
 								!showCreateShooterProfileModal,
-							)
-						}
+							);
+							setTimeout(
+								() =>
+									scrollTo({
+										top: 100000,
+										behavior: "smooth",
+									}),
+								300,
+							);
+						}}
 					>
 						Add Shooter Profile
 					</Button>
@@ -87,7 +98,24 @@ function ShooterProfileList() {
 			)}
 			<Stack spacing={2} sx={{ mt: 2 }}>
 				{shooterProfiles?.map((shooterProfile) => (
-					<ShooterProfileCard {...shooterProfile} />
+					<ShooterProfileCard
+						{...shooterProfile}
+						slots={{
+							action: (
+								<Card
+									variant="outlined"
+									sx={{ borderRadius: 1e5 }}
+								>
+									<IconButton>
+										<SettingsIcon />
+									</IconButton>
+									<IconButton color="error">
+										<DeleteIcon />
+									</IconButton>
+								</Card>
+							),
+						}}
+					/>
 				))}
 			</Stack>
 		</>

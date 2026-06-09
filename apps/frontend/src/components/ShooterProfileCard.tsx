@@ -6,11 +6,15 @@ import {
 } from "@shooting_sports_scoreboard/common";
 import Grid from "@mui/material/Grid";
 import { Flag } from "./Flag";
+import type { ReactElement } from "react";
 
 export function ShooterProfileCard(props: {
 	sport: Sport;
 	region: RegionalCode;
 	identifier: string;
+	slots?: {
+		action?: ReactElement;
+	};
 }) {
 	const { sport, region, identifier } = props;
 
@@ -29,13 +33,18 @@ export function ShooterProfileCard(props: {
 				>
 					<Flag region={region} height={30} showCode />
 				</Grid>
-				<Grid
-					size={{ xs: 12, sm: 2 }}
-					alignContent="center"
-					justifyItems="end"
-				>
+				<Grid size={{ xs: 6, sm: 1.5, md: 1 }} alignContent="center">
 					<Typography variant="body2">{identifier}</Typography>
 				</Grid>
+				{props.slots?.action && (
+					<Grid
+						size={{ xs: 6, sm: "auto" }}
+						justifyItems="end"
+						justifyContent="end"
+					>
+						{props.slots.action}
+					</Grid>
+				)}
 			</Grid>
 		</Card>
 	);

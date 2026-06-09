@@ -44,3 +44,37 @@ export const getShooterProfileQuery = () =>
 				headers: getIsomorphicRequestHeaders(),
 			}),
 	});
+
+export const updateShooterProfileMutation = (
+	confirm: ReturnType<typeof useConfirm>,
+) =>
+	mutationOptions({
+		mutationKey: ["update-shooter-profile"],
+		mutationFn: async (data: {
+			id: string;
+			sport: Sport;
+			region: RegionalCode;
+			identifier: string;
+			name: string;
+		}) => {
+			await client["shooter-profile"]({ id: data.id }).put({
+				identifier: data.identifier,
+				sport: data.sport,
+				region: data.region,
+				name: data.name,
+			});
+		},
+		onSuccess: async (_data, _variable, _result, context) => {
+			await context.client.invalidateQueries({
+				queryKey: ["user-shooter-profiles"],
+			});
+		},
+		onError: (error: Error) => {
+			console.error(error);
+			confirm({
+				title: "Error when updating shooter profile",
+				content: error.message,
+				hideCancelButton: true,
+			});
+		},
+	});
