@@ -1,4 +1,9 @@
-import { Sport, Sports } from "@shooting_sports_scoreboard/common";
+import {
+	RegionalCode,
+	RegionalCodes,
+	Sport,
+	Sports,
+} from "@shooting_sports_scoreboard/common";
 import { User } from "./auth.js";
 import {
 	Entity,
@@ -18,6 +23,9 @@ export class ShooterProfile {
 
 	@Enum(() => Sports)
 	sport!: Sport;
+
+	@Enum(() => RegionalCodes)
+	region!: RegionalCode;
 
 	@Property()
 	identifier!: string;

@@ -5,7 +5,11 @@ import {
 	whereClauseFromFilter,
 } from "@/utils/filters.js";
 import { createPaginationQuerySchema } from "@/utils/paginations.js";
-import { Sports } from "@shooting_sports_scoreboard/common";
+import {
+	RegionalCodeMap,
+	RegionalCodes,
+	Sports,
+} from "@shooting_sports_scoreboard/common";
 import { Elysia } from "elysia";
 import * as v from "valibot";
 import { serialize, wrap } from "@mikro-orm/core";
@@ -17,6 +21,7 @@ const createShooterProfileDto = v.object({
 	name: v.string(),
 	sport: v.picklist(Sports),
 	identifier: v.string(),
+	region: v.picklist(RegionalCodes),
 });
 
 const guardCreateShooterProfile: GuardFunction<
@@ -31,21 +36,26 @@ const guardCreateShooterProfile: GuardFunction<
 		(await em.count(ShooterProfile, {
 			user: userId,
 			sport: body.sport,
-			id: { $ne: excludeShooterProfileId },
-		})) > 0
-	)
-		return [403, `You already has a shooter profile for sport ${body.sport}.`];
-
-	if (
-		(await em.count(ShooterProfile, {
-			identifier: body.identifier,
-			sport: body.sport,
+			region: body.region,
 			id: { $ne: excludeShooterProfileId },
 		})) > 0
 	)
 		return [
 			403,
-			`Identifier ${body.identifier} is already used for sport ${body.sport}.`,
+			`You already has a shooter profile for sport ${body.sport} in ${RegionalCodeMap[body.region]}."];.`,
+		];
+
+	if (
+		(await em.count(ShooterProfile, {
+			identifier: body.identifier,
+			sport: body.sport,
+			region: body.region,
+			id: { $ne: excludeShooterProfileId },
+		})) > 0
+	)
+		return [
+			403,
+			`Identifier ${body.identifier} is already used for sport ${body.sport} in ${RegionalCodeMap[body.region]}."];`,
 		];
 };
 
@@ -120,6 +130,10 @@ export const shooterProfilesRoute = new Elysia({
 							ops: ["eq", "ne", "in", "nin"],
 							schema: v.picklist(Sports),
 						},
+						region: {
+							ops: ["eq", "ne", "in", "nin"],
+							schema: v.picklist(RegionalCodes),
+						},
 					}),
 				}),
 			),
@@ -131,10 +145,11 @@ export const shooterProfilesRoute = new Elysia({
 			const guardResult = await guardCreateShooterProfile(user.id, em, body);
 			if (guardResult) return status(guardResult[0], guardResult[1]);
 			const shooterProfile = em.create(ShooterProfile, {
-				identifier: body.identifier,
 				name: user.name,
-				sport: body.sport,
 				user: user.id,
+				identifier: body.identifier,
+				sport: body.sport,
+				region: body.region,
 			});
 			await em.persist(shooterProfile).flush();
 			return wrap(shooterProfile).toObject();
@@ -161,6 +176,7 @@ export const shooterProfilesRoute = new Elysia({
 			shooterProfile.identifier = body.identifier;
 			shooterProfile.name = body.name;
 			shooterProfile.sport = body.sport;
+			shooterProfile.region = body.region;
 			await em.persist(shooterProfile).flush();
 			return wrap(shooterProfile).toObject();
 		},
