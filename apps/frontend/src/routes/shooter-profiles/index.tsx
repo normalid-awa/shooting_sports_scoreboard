@@ -4,6 +4,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/shooter-profiles/")({
 	component: RouteComponent,
+	staticData: {
+		pageTitle: "Shooter Profiles",
+	},
 });
 
 function RouteComponent() {

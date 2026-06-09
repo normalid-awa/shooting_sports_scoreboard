@@ -13,6 +13,7 @@ import { Route as TimerRouteImport } from './routes/timer'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShooterProfilesIndexRouteImport } from './routes/shooter-profiles/index'
+import { Route as ShooterProfilesSelfRouteImport } from './routes/shooter-profiles/self'
 import { Route as AccountManagementRouteImport } from './routes/account/management'
 
 const TimerRoute = TimerRouteImport.update({
@@ -35,6 +36,11 @@ const ShooterProfilesIndexRoute = ShooterProfilesIndexRouteImport.update({
   path: '/shooter-profiles/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShooterProfilesSelfRoute = ShooterProfilesSelfRouteImport.update({
+  id: '/shooter-profiles/self',
+  path: '/shooter-profiles/self',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountManagementRoute = AccountManagementRouteImport.update({
   id: '/management',
   path: '/management',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRouteWithChildren
   '/timer': typeof TimerRoute
   '/account/management': typeof AccountManagementRoute
+  '/shooter-profiles/self': typeof ShooterProfilesSelfRoute
   '/shooter-profiles/': typeof ShooterProfilesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRouteWithChildren
   '/timer': typeof TimerRoute
   '/account/management': typeof AccountManagementRoute
+  '/shooter-profiles/self': typeof ShooterProfilesSelfRoute
   '/shooter-profiles': typeof ShooterProfilesIndexRoute
 }
 export interface FileRoutesById {
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRouteWithChildren
   '/timer': typeof TimerRoute
   '/account/management': typeof AccountManagementRoute
+  '/shooter-profiles/self': typeof ShooterProfilesSelfRoute
   '/shooter-profiles/': typeof ShooterProfilesIndexRoute
 }
 export interface FileRouteTypes {
@@ -70,15 +79,23 @@ export interface FileRouteTypes {
     | '/account'
     | '/timer'
     | '/account/management'
+    | '/shooter-profiles/self'
     | '/shooter-profiles/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/account' | '/timer' | '/account/management' | '/shooter-profiles'
+  to:
+    | '/'
+    | '/account'
+    | '/timer'
+    | '/account/management'
+    | '/shooter-profiles/self'
+    | '/shooter-profiles'
   id:
     | '__root__'
     | '/'
     | '/account'
     | '/timer'
     | '/account/management'
+    | '/shooter-profiles/self'
     | '/shooter-profiles/'
   fileRoutesById: FileRoutesById
 }
@@ -86,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRouteWithChildren
   TimerRoute: typeof TimerRoute
+  ShooterProfilesSelfRoute: typeof ShooterProfilesSelfRoute
   ShooterProfilesIndexRoute: typeof ShooterProfilesIndexRoute
 }
 
@@ -119,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShooterProfilesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shooter-profiles/self': {
+      id: '/shooter-profiles/self'
+      path: '/shooter-profiles/self'
+      fullPath: '/shooter-profiles/self'
+      preLoaderRoute: typeof ShooterProfilesSelfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account/management': {
       id: '/account/management'
       path: '/management'
@@ -144,6 +169,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRouteWithChildren,
   TimerRoute: TimerRoute,
+  ShooterProfilesSelfRoute: ShooterProfilesSelfRoute,
   ShooterProfilesIndexRoute: ShooterProfilesIndexRoute,
 }
 export const routeTree = rootRouteImport
