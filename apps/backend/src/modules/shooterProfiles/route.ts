@@ -42,7 +42,7 @@ const guardCreateShooterProfile: GuardFunction<
 	)
 		return [
 			403,
-			`You already has a shooter profile for sport ${body.sport} in ${RegionalCodeMap[body.region]}."];.`,
+			`You already has a shooter profile for sport ${body.sport} in ${RegionalCodeMap[body.region]}.`,
 		];
 
 	if (
@@ -55,7 +55,7 @@ const guardCreateShooterProfile: GuardFunction<
 	)
 		return [
 			403,
-			`Identifier ${body.identifier} is already used for sport ${body.sport} in ${RegionalCodeMap[body.region]}."];`,
+			`Identifier ${body.identifier} is already used for sport ${body.sport} in ${RegionalCodeMap[body.region]}.`,
 		];
 };
 

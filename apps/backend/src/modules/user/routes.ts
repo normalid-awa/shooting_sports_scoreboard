@@ -26,36 +26,4 @@ export const userRoutes = new Elysia({
 				id: v.pipe(v.string(), v.uuid()),
 			}),
 		},
-	)
-	.post(
-		"/shooter-profile/create",
-		async ({ em, body, user }) => {
-			const isProfileExists =
-				(await em.count(ShooterProfile, {
-					$and: [{ sport: body.sport }, { identifier: body.identifier }],
-				})) == 1;
-
-			if (isProfileExists)
-				return status(
-					409,
-					`Identifier ${body.identifier} already exists for sport ${body.sport}`,
-				);
-
-			const shooterProfile = em.create(ShooterProfile, {
-				sport: body.sport,
-				identifier: body.identifier,
-				user: user.id,
-				name: body.name!,
-			});
-			await em.persist(shooterProfile).flush();
-			return wrap(shooterProfile).toObject();
-		},
-		{
-			body: v.object({
-				sport: v.picklist(Sports),
-				identifier: v.string(),
-				name: v.optional(v.string()),
-			}),
-			auth: true,
-		},
 	);
