@@ -68,6 +68,10 @@ export const updateShooterProfileMutation = (
 			await context.client.invalidateQueries({
 				queryKey: ["self-shooter-profiles"],
 			});
+			confirm({
+				title: "Shooter profile updated successfully",
+				hideCancelButton: true,
+			});
 		},
 		onError: (error: Error) => {
 			console.error(error);
@@ -90,6 +94,10 @@ export const deleteShooterProfileMutation = (
 		onSuccess: async (_data, _variable, _result, context) => {
 			await context.client.invalidateQueries({
 				queryKey: ["self-shooter-profiles"],
+			});
+			confirm({
+				title: "Shooter profile deleted successfully",
+				hideCancelButton: true,
 			});
 		},
 		onError: (error: Error) => {

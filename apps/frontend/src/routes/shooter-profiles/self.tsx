@@ -1,4 +1,4 @@
-import { CreateShooterProfileForm } from "#/components/CreateShooterProfileForm";
+import { ModifyShooterProfileForm } from "#/components/CreateShooterProfileForm";
 import EnsureAuth from "#/integrations/better-auth/EnsureAuth";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -12,8 +12,10 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
 import {
+	createShooterProfileMutation,
 	deleteShooterProfileMutation,
 	getUserShooterProfileQuery,
+	updateShooterProfileMutation,
 } from "#/apis/shooterProfile";
 import { ShooterProfileCard } from "#/components/ShooterProfileCard";
 import IconButton from "@mui/material/IconButton";
@@ -21,6 +23,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useConfirm } from "material-ui-confirm";
 import { RegionalCodeMap } from "@shooting_sports_scoreboard/common";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
 
 export const Route = createFileRoute("/shooter-profiles/self")({
 	component: () => <EnsureAuth component={<RouteComponent />} />,
@@ -35,6 +40,11 @@ export const Route = createFileRoute("/shooter-profiles/self")({
 function RouteComponent() {
 	const [showCreateShooterProfileModal, setShowCreateShooterProfileModal] =
 		useState(false);
+
+	const confirm = useConfirm();
+	const createShooterProfile = useMutation(
+		createShooterProfileMutation(confirm),
+	);
 
 	return (
 		<Container fixed maxWidth="md">
@@ -75,10 +85,17 @@ function RouteComponent() {
 					</Button>
 					<Collapse in={showCreateShooterProfileModal} unmountOnExit>
 						<Card variant="outlined" sx={{ p: 2 }}>
-							<CreateShooterProfileForm
-								onCreated={() =>
-									setShowCreateShooterProfileModal(false)
-								}
+							<ModifyShooterProfileForm
+								submitting={createShooterProfile.isPending}
+								onSubmit={async (sport, region, identifier) => {
+									await createShooterProfile.mutateAsync({
+										sport,
+										region,
+										identifier,
+									});
+									setShowCreateShooterProfileModal(false);
+								}}
+								confirmationText="Create"
 							/>
 						</Card>
 					</Collapse>
@@ -94,6 +111,11 @@ function ShooterProfileList() {
 	const confirm = useConfirm();
 	const deleteShooterProfileMutationFn = useMutation(
 		deleteShooterProfileMutation(confirm),
+	);
+	const [editingShooterProfileIndex, setShowEditingShooterProfileModal] =
+		useState<null | number>(null);
+	const updateShooterProfileMutationFn = useMutation(
+		updateShooterProfileMutation(confirm),
 	);
 
 	const deleteShooterProfile = (id: string) => async () => {
@@ -112,12 +134,7 @@ function ShooterProfileList() {
 			).confirmed
 		)
 			return;
-
 		await deleteShooterProfileMutationFn.mutateAsync(id);
-		confirm({
-			title: "Shooter profile deleted successfully",
-			hideCancelButton: true,
-		});
 	};
 
 	return (
@@ -129,9 +146,61 @@ function ShooterProfileList() {
 					performance!
 				</Typography>
 			)}
+			<Dialog
+				open={editingShooterProfileIndex !== null}
+				onClose={() => setShowEditingShooterProfileModal(null)}
+				maxWidth="lg"
+			>
+				<DialogTitle>Modify Shooter Profile Info</DialogTitle>
+				<DialogContent>
+					{editingShooterProfileIndex !== null && (
+						<ModifyShooterProfileForm
+							sx={{ mt: 1 }}
+							submitting={
+								updateShooterProfileMutationFn.isPending
+							}
+							confirmationText="Update"
+							defaultValue={{
+								sport: shooterProfiles![
+									editingShooterProfileIndex!
+								].sport,
+								region: shooterProfiles![
+									editingShooterProfileIndex!
+								].region,
+								identifier:
+									shooterProfiles![
+										editingShooterProfileIndex!
+									].identifier,
+							}}
+							onSubmit={(sport, region, identifier) => {
+								updateShooterProfileMutationFn.mutateAsync(
+									{
+										id: shooterProfiles![
+											editingShooterProfileIndex!
+										].id,
+										sport,
+										region,
+										identifier,
+										name: shooterProfiles![
+											editingShooterProfileIndex!
+										].name,
+									},
+									{
+										onSuccess: () =>
+											setShowEditingShooterProfileModal(
+												null,
+											),
+									},
+								);
+							}}
+						/>
+					)}
+				</DialogContent>
+			</Dialog>
 			<Stack spacing={{ xs: 0, sm: 1 }} sx={{ mt: 2 }}>
-				{shooterProfiles?.map((shooterProfile) => (
+				{shooterProfiles?.map((shooterProfile, index) => (
 					<ShooterProfileCard
+						key={shooterProfile.id}
 						{...shooterProfile}
 						slots={{
 							action: (
@@ -139,7 +208,13 @@ function ShooterProfileList() {
 									variant="outlined"
 									sx={{ borderRadius: 1e5 }}
 								>
-									<IconButton>
+									<IconButton
+										onClick={() =>
+											setShowEditingShooterProfileModal(
+												index,
+											)
+										}
+									>
 										<SettingsIcon />
 									</IconButton>
 									<IconButton

@@ -13,18 +13,22 @@ import {
 } from "@shooting_sports_scoreboard/common";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { useMutation } from "@tanstack/react-query";
-import { useConfirm } from "material-ui-confirm";
-import { createShooterProfileMutation } from "#/apis/shooterProfile";
+import type { SxProps, Theme } from "@mui/material/styles";
 
-export function CreateShooterProfileForm(props: { onCreated?: () => void }) {
-	const confirm = useConfirm();
-	const createShooterProfile = useMutation(
-		createShooterProfileMutation(confirm),
-	);
-
+export function ModifyShooterProfileForm(props: {
+	onSubmit?: (sport: Sport, region: RegionalCode, identifier: string) => void;
+	submitting: boolean;
+	confirmationText: string;
+	defaultValue?: {
+		sport?: Sport;
+		region?: RegionalCode;
+		identifier?: string;
+	};
+	sx?: SxProps<Theme>;
+}) {
 	return (
 		<Grid
+			sx={props.sx}
 			container
 			spacing={2}
 			component="form"
@@ -34,18 +38,18 @@ export function CreateShooterProfileForm(props: { onCreated?: () => void }) {
 				const sport = formData.get("sport") as Sport;
 				const region = formData.get("region") as RegionalCode;
 				const identifier = formData.get("identifier") as string;
-				await createShooterProfile.mutateAsync({
-					sport,
-					region,
-					identifier,
-				});
-				props.onCreated?.();
+				props.onSubmit?.(sport, region, identifier);
 			}}
 		>
 			<Grid size={{ xs: 12, md: 12 / 3, sm: 6 }}>
 				<FormControl fullWidth required>
 					<InputLabel>Sport</InputLabel>
-					<Select label="Sport" name="sport">
+					<Select
+						autoComplete="shooter-profile-sport"
+						label="Sport"
+						name="sport"
+						defaultValue={props.defaultValue?.sport}
+					>
 						{Sports.map((sport) => (
 							<MenuItem key={sport} value={sport}>
 								{sport}
@@ -57,7 +61,12 @@ export function CreateShooterProfileForm(props: { onCreated?: () => void }) {
 			<Grid size={{ xs: 12, md: 12 / 3, sm: 6 }}>
 				<FormControl fullWidth required>
 					<InputLabel>Region</InputLabel>
-					<Select label="Region" name="region">
+					<Select
+						autoComplete="shooter-profile-region"
+						label="Region"
+						name="region"
+						defaultValue={props.defaultValue?.region}
+					>
 						{RegionalCodes.map((region) => (
 							<MenuItem key={region} value={region}>
 								<img
@@ -75,6 +84,9 @@ export function CreateShooterProfileForm(props: { onCreated?: () => void }) {
 			</Grid>
 			<Grid size={{ xs: 12, md: 12 / 3, sm: 12 }}>
 				<TextField
+					type="text"
+					autoComplete="shooter-profile-identifier"
+					defaultValue={props.defaultValue?.identifier}
 					fullWidth
 					required
 					label="Identifier"
@@ -88,9 +100,9 @@ export function CreateShooterProfileForm(props: { onCreated?: () => void }) {
 					type="submit"
 					variant="contained"
 					fullWidth
-					loading={createShooterProfile.isPending}
+					loading={props.submitting}
 				>
-					Create
+					{props.confirmationText}
 				</Button>
 			</Grid>
 		</Grid>
