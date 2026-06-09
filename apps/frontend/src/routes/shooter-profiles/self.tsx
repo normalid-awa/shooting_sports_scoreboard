@@ -8,19 +8,24 @@ import Divider from "@mui/material/Divider";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, useState } from "react";
-import { getShooterProfileQuery } from "#/apis/shooterProfile";
+import {
+	deleteShooterProfileMutation,
+	getUserShooterProfileQuery,
+} from "#/apis/shooterProfile";
 import { ShooterProfileCard } from "#/components/ShooterProfileCard";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { useConfirm } from "material-ui-confirm";
+import { RegionalCodeMap } from "@shooting_sports_scoreboard/common";
 
 export const Route = createFileRoute("/shooter-profiles/self")({
 	component: () => <EnsureAuth component={<RouteComponent />} />,
 	loader: async ({ context }) => {
-		await context.queryClient.ensureQueryData(getShooterProfileQuery());
+		await context.queryClient.ensureQueryData(getUserShooterProfileQuery());
 	},
 	staticData: {
 		pageTitle: "My Shooter Profile",
@@ -34,7 +39,7 @@ function RouteComponent() {
 	return (
 		<Container fixed maxWidth="md">
 			<Card sx={{ p: 2, m: 2 }}>
-				<Stack spacing={2}>
+				<Stack spacing={{ xs: 1, sm: 2 }}>
 					<Typography variant="h5">My shooter profiles</Typography>
 					<Divider />
 					<Suspense
@@ -84,8 +89,36 @@ function RouteComponent() {
 }
 
 function ShooterProfileList() {
-	const shooterProfiles = useSuspenseQuery(getShooterProfileQuery()).data
+	const shooterProfiles = useSuspenseQuery(getUserShooterProfileQuery()).data
 		?.data;
+	const confirm = useConfirm();
+	const deleteShooterProfileMutationFn = useMutation(
+		deleteShooterProfileMutation(confirm),
+	);
+
+	const deleteShooterProfile = (id: string) => async () => {
+		const shooterProfile = shooterProfiles?.find(
+			(profile) => profile.id === id,
+		)!;
+		if (
+			!(
+				await confirm({
+					title: "Confirmation of deletion of shooter profile (IRREVERSIBLE OPERATION)",
+					description: `Are you sure you want to delete the ${shooterProfile.sport} shooter profile with identifier ${shooterProfile.identifier} in ${RegionalCodeMap[shooterProfile.region]}?`,
+					acknowledgement:
+						"You have acknowledged the deletion is irreversible",
+					confirmationText: "Delete",
+				})
+			).confirmed
+		)
+			return;
+
+		await deleteShooterProfileMutationFn.mutateAsync(id);
+		confirm({
+			title: "Shooter profile deleted successfully",
+			hideCancelButton: true,
+		});
+	};
 
 	return (
 		<>
@@ -96,7 +129,7 @@ function ShooterProfileList() {
 					performance!
 				</Typography>
 			)}
-			<Stack spacing={2} sx={{ mt: 2 }}>
+			<Stack spacing={{ xs: 0, sm: 1 }} sx={{ mt: 2 }}>
 				{shooterProfiles?.map((shooterProfile) => (
 					<ShooterProfileCard
 						{...shooterProfile}
@@ -109,7 +142,15 @@ function ShooterProfileList() {
 									<IconButton>
 										<SettingsIcon />
 									</IconButton>
-									<IconButton color="error">
+									<IconButton
+										color="error"
+										onClick={deleteShooterProfile(
+											shooterProfile.id,
+										)}
+										loading={
+											deleteShooterProfileMutationFn.isPending
+										}
+									>
 										<DeleteIcon />
 									</IconButton>
 								</Card>

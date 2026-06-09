@@ -23,7 +23,7 @@ export const createShooterProfileMutation = (
 		},
 		onSuccess: async (_data, _variable, _result, context) => {
 			await context.client.invalidateQueries({
-				queryKey: ["user-shooter-profiles"],
+				queryKey: ["self-shooter-profiles"],
 			});
 		},
 		onError: (error: Error) => {
@@ -36,9 +36,9 @@ export const createShooterProfileMutation = (
 		},
 	});
 
-export const getShooterProfileQuery = () =>
+export const getUserShooterProfileQuery = () =>
 	queryOptions({
-		queryKey: ["user-shooter-profiles"],
+		queryKey: ["self-shooter-profiles"],
 		queryFn: async () =>
 			await client["shooter-profile"]["self"].get({
 				headers: getIsomorphicRequestHeaders(),
@@ -66,13 +66,36 @@ export const updateShooterProfileMutation = (
 		},
 		onSuccess: async (_data, _variable, _result, context) => {
 			await context.client.invalidateQueries({
-				queryKey: ["user-shooter-profiles"],
+				queryKey: ["self-shooter-profiles"],
 			});
 		},
 		onError: (error: Error) => {
 			console.error(error);
 			confirm({
 				title: "Error when updating shooter profile",
+				content: error.message,
+				hideCancelButton: true,
+			});
+		},
+	});
+
+export const deleteShooterProfileMutation = (
+	confirm: ReturnType<typeof useConfirm>,
+) =>
+	mutationOptions({
+		mutationKey: ["delete-shooter-profile"],
+		mutationFn: async (id: string) => {
+			await client["shooter-profile"]({ id }).delete();
+		},
+		onSuccess: async (_data, _variable, _result, context) => {
+			await context.client.invalidateQueries({
+				queryKey: ["self-shooter-profiles"],
+			});
+		},
+		onError: (error: Error) => {
+			console.error(error);
+			confirm({
+				title: "Error when deleting shooter profile",
 				content: error.message,
 				hideCancelButton: true,
 			});
