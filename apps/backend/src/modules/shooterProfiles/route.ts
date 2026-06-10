@@ -113,7 +113,7 @@ export const shooterProfilesRoute = new Elysia({
 		{
 			body: v.optional(
 				v.object({
-					pagination: createPaginationQuerySchema(["id", "name"], {
+					pagination: createPaginationQuerySchema(["name", "createdAt"], {
 						min: 1,
 						max: 20,
 					}),

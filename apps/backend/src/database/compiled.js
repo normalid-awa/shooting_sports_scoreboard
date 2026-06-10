@@ -717,9 +717,20 @@ export default {
           entity.user = factory.create(user_40, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
         }
       }
+      if (data.createdAt === null) {
+        entity.createdAt = null;
+      } else if (typeof data.createdAt !== 'undefined') {
+        if (data.createdAt instanceof Date) {
+          entity.createdAt = data.createdAt;
+        } else if (typeof data.createdAt === 'number' || data.createdAt.includes('+') || data.createdAt.lastIndexOf('-') > 10 || data.createdAt.endsWith('Z')) {
+          entity.createdAt = new Date(data.createdAt);
+        } else {
+          entity.createdAt = new Date(data.createdAt + 'Z');
+        }
+      }
     }
   },
-  'hydrator-shooter_profile_0-full-true': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_46, user_47) {
+  'hydrator-shooter_profile_0-full-true': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_47, user_48) {
     // compiled hydrator for entity ShooterProfile ( normalized)
     return function(entity, data, factory, newEntity, convertCustomTypes, schema, parentSchema, normalizeAccessors) {
       if (data.id === null) {
@@ -751,9 +762,20 @@ export default {
         entity.user = null;
       } else if (typeof data.user !== 'undefined') {
         if (isPrimaryKey(data.user, true)) {
-          entity.user = factory.createReference(user_46, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.createReference(user_47, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
         } else if (data.user && typeof data.user === 'object') {
-          entity.user = factory.create(user_47, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.create(user_48, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
+        }
+      }
+      if (data.createdAt === null) {
+        entity.createdAt = null;
+      } else if (typeof data.createdAt !== 'undefined') {
+        if (data.createdAt instanceof Date) {
+          entity.createdAt = data.createdAt;
+        } else if (typeof data.createdAt === 'number' || data.createdAt.includes('+') || data.createdAt.lastIndexOf('-') > 10 || data.createdAt.endsWith('Z')) {
+          entity.createdAt = new Date(data.createdAt);
+        } else {
+          entity.createdAt = new Date(data.createdAt + 'Z');
         }
       }
     }
@@ -822,12 +844,22 @@ export default {
         diff.user = current.user;
       }
     
+      if (current.createdAt === null && last.createdAt === undefined) {
+        diff.createdAt = current.createdAt;
+      } else if (current.createdAt == null && last.createdAt == null) {
+    
+      } else if ((current.createdAt != null && last.createdAt == null) || (current.createdAt == null && last.createdAt != null)) {
+        diff.createdAt = current.createdAt;
+      } else if (last.createdAt.valueOf() !== current.createdAt.valueOf()) {
+        diff.createdAt = current.createdAt;
+      }
+    
     if (options?.includeInverseSides) {
     }
       return diff;
     }
   },
-  'snapshotGenerator-shooter_profile_0': function(clone, cloneEmbeddable, toArray, EntityIdentifier) {
+  'snapshotGenerator-shooter_profile_0': function(clone, cloneEmbeddable, toArray, EntityIdentifier, processDateProperty) {
     return function(entity) {
       const ret = {};
       if (typeof entity.id !== 'undefined') {
@@ -860,10 +892,14 @@ export default {
         }
       }
     
+      if (typeof entity.createdAt !== 'undefined') {
+        ret.createdAt = clone(processDateProperty(entity.createdAt));
+      }
+    
       return ret;
     }
   },
-  'resultMapper-shooter_profile_0': function(PolymorphicRef) {
+  'resultMapper-shooter_profile_0': function(PolymorphicRef, parseDate) {
     // compiled mapper for entity ShooterProfile
     return function(result) {
       const ret = {};
@@ -891,6 +927,18 @@ export default {
       if (typeof result.user_id !== 'undefined') {
         ret.user = result.user_id;
         mapped.user_id = true;
+      }
+      if (typeof result.created_at !== 'undefined') {
+        if (result.created_at == null || result.created_at instanceof Date) {
+          ret.createdAt = result.created_at;
+        } else if (typeof result.created_at === 'bigint') {
+          ret.createdAt = parseDate(Number(result.created_at));
+        } else if (typeof result.created_at === 'number' || result.created_at.includes('+') || result.created_at.lastIndexOf('-') > 10 || result.created_at.endsWith('Z')) {
+          ret.createdAt = parseDate(result.created_at);
+        } else {
+          ret.createdAt = parseDate(result.created_at + 'Z');
+        }
+        mapped.created_at = true;
       }
       for (let k in result) { if (Object.hasOwn(result, k) && !mapped[k] && ret[k] === undefined) ret[k] = result[k]; }
       return ret;
@@ -934,7 +982,7 @@ export default {
       return '' + entity.id;
     }
   },
-  'hydrator-session_2000-full-false': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_57, user_58) {
+  'hydrator-session_2000-full-false': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_59, user_60) {
     // compiled hydrator for entity Session ( normalized)
     return function(entity, data, factory, newEntity, convertCustomTypes, schema, parentSchema, normalizeAccessors) {
       if (data.id === null) {
@@ -994,14 +1042,14 @@ export default {
         entity.user = null;
       } else if (typeof data.user !== 'undefined') {
         if (isPrimaryKey(data.user, true)) {
-          entity.user = factory.createReference(user_57, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.createReference(user_59, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
         } else if (data.user && typeof data.user === 'object') {
-          entity.user = factory.create(user_58, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.create(user_60, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
         }
       }
     }
   },
-  'hydrator-session_2000-full-true': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_66, user_67) {
+  'hydrator-session_2000-full-true': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_68, user_69) {
     // compiled hydrator for entity Session ( normalized)
     return function(entity, data, factory, newEntity, convertCustomTypes, schema, parentSchema, normalizeAccessors) {
       if (data.id === null) {
@@ -1061,9 +1109,9 @@ export default {
         entity.user = null;
       } else if (typeof data.user !== 'undefined') {
         if (isPrimaryKey(data.user, true)) {
-          entity.user = factory.createReference(user_66, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.createReference(user_68, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
         } else if (data.user && typeof data.user === 'object') {
-          entity.user = factory.create(user_67, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.create(user_69, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
         }
       }
     }
@@ -1304,7 +1352,7 @@ export default {
       return '' + entity.id;
     }
   },
-  'hydrator-account_3000-full-false': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_73, user_74) {
+  'hydrator-account_3000-full-false': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_75, user_76) {
     // compiled hydrator for entity Account ( normalized)
     return function(entity, data, factory, newEntity, convertCustomTypes, schema, parentSchema, normalizeAccessors) {
       if (data.id === null) {
@@ -1326,9 +1374,9 @@ export default {
         entity.user = null;
       } else if (typeof data.user !== 'undefined') {
         if (isPrimaryKey(data.user, true)) {
-          entity.user = factory.createReference(user_73, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.createReference(user_75, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
         } else if (data.user && typeof data.user === 'object') {
-          entity.user = factory.create(user_74, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.create(user_76, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
         }
       }
       if (data.accessToken === null) {
@@ -1402,7 +1450,7 @@ export default {
       }
     }
   },
-  'hydrator-account_3000-full-true': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_87, user_88) {
+  'hydrator-account_3000-full-true': function(isPrimaryKey, isEntity, isScalarReference, Collection, Reference, PolymorphicRef, ValidationError, user_89, user_90) {
     // compiled hydrator for entity Account ( normalized)
     return function(entity, data, factory, newEntity, convertCustomTypes, schema, parentSchema, normalizeAccessors) {
       if (data.id === null) {
@@ -1424,9 +1472,9 @@ export default {
         entity.user = null;
       } else if (typeof data.user !== 'undefined') {
         if (isPrimaryKey(data.user, true)) {
-          entity.user = factory.createReference(user_87, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.createReference(user_89, data.user, { merge: true, convertCustomTypes, normalizeAccessors, schema });
         } else if (data.user && typeof data.user === 'object') {
-          entity.user = factory.create(user_88, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
+          entity.user = factory.create(user_90, data.user, { initialized: true, merge: true, newEntity, convertCustomTypes, normalizeAccessors, schema });
         }
       }
       if (data.accessToken === null) {

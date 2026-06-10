@@ -12,6 +12,7 @@ import {
 	PrimaryKey,
 	Property,
 } from "@mikro-orm/decorators/es";
+import { Opt } from "@mikro-orm/core";
 
 @Entity()
 export class ShooterProfile {
@@ -32,4 +33,7 @@ export class ShooterProfile {
 
 	@ManyToOne()
 	user!: User;
+
+	@Property({ onCreate: () => new Date(), defaultRaw: "current_timestamp" })
+	createdAt: Opt<Date> = new Date();
 }
