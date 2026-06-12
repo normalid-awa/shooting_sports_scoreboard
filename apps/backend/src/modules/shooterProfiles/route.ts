@@ -126,6 +126,10 @@ export const shooterProfilesRoute = new Elysia({
 							ops: ["like", "eq", "in", "nin"],
 							schema: v.string(),
 						},
+						identifier: {
+							ops: ["like", "eq", "in", "nin"],
+							schema: v.string(),
+						},
 						sport: {
 							ops: ["eq", "ne", "in", "nin"],
 							schema: v.picklist(Sports),

@@ -27,6 +27,8 @@ import z from "zod";
 import ClearIcon from "@mui/icons-material/Clear";
 import { debounce } from "@mui/material/utils";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { listShooterProfilesQuery } from "#/apis/shooterProfile";
+import { emptyArrayOrValue } from "#/utils";
 
 const sortOptions = {
 	name: "Name",
@@ -50,7 +52,50 @@ export const Route = createFileRoute("/shooter-profiles/")({
 			.union([z.literal("asc"), z.literal("desc")])
 			.optional()
 			.default("desc"),
+		page: z.int().optional().default(1),
 	}),
+	loaderDeps: ({ search }) => search,
+	loader: async ({ deps, context }) => {
+		return await context.queryClient.fetchQuery(
+			listShooterProfilesQuery({
+				filter: {
+					logic: "and",
+					conditions: [
+						...emptyArrayOrValue(deps.search != undefined, {
+							logic: "or",
+							conditions: [
+								{
+									field: "name",
+									operator: "like",
+									value: `%${deps.search}%`,
+								},
+								{
+									field: "identifier",
+									operator: "like",
+									value: `%${deps.search}%`,
+								},
+							],
+						}),
+						...emptyArrayOrValue(deps.region != undefined, {
+							field: "region",
+							operator: "in",
+							value: deps.region!,
+						}),
+						...emptyArrayOrValue(deps.sports != undefined, {
+							field: "sport",
+							operator: "in",
+							value: deps.sports!,
+						}),
+					],
+				},
+				pagination: {
+					orderBy: deps.sortBy,
+					order: deps.sortOrder,
+					page: deps.page,
+				},
+			}),
+		);
+	},
 	staticData: {
 		pageTitle: "Shooter Profiles",
 	},
@@ -276,10 +321,12 @@ function ShooterProfileListFilterBlock() {
 }
 
 function ShooterProfileList() {
+	const s = Route.useLoaderData();
 	return (
 		<Card>
 			<Stack>
 				<ShooterProfileListFilterBlock />
+				{JSON.stringify(s)}
 			</Stack>
 		</Card>
 	);

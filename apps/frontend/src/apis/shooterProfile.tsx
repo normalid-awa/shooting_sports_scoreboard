@@ -109,3 +109,12 @@ export const deleteShooterProfileMutation = (
 			});
 		},
 	});
+
+export const listShooterProfilesQuery = (
+	arg: Parameters<(typeof client)["shooter-profile"]["list"]["post"]>[0],
+) =>
+	queryOptions({
+		queryKey: ["shooter-profiles", JSON.stringify(arg)],
+		queryFn: async () =>
+			(await client["shooter-profile"]["list"].post(arg)).data,
+	});
