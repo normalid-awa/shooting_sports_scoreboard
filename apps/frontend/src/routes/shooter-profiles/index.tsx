@@ -15,7 +15,6 @@ import { useTheme, type SxProps, type Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
-	RegionalCodeMap,
 	RegionalCodes,
 	Sports,
 	type RegionalCode,
@@ -32,8 +31,6 @@ import { emptyArrayOrValue } from "#/utils";
 import Divider from "@mui/material/Divider";
 import { useResponsiveLayout } from "#/hooks/useResponsiveLayout";
 import { ShooterProfileCard } from "#/components/ShooterProfileCard";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Collapse from "@mui/material/Collapse";

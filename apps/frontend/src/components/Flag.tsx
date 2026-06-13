@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import type { SxProps, Theme } from "@mui/material/styles";
+import { useColorScheme, type SxProps, type Theme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import {
 	Alpha3ToAlpha2Map,
@@ -27,6 +27,8 @@ export function Flag(props: {
 	};
 	size?: "small" | "medium";
 }) {
+	const { mode, systemMode } = useColorScheme();
+
 	const isSmall = props.size === "small";
 	return (
 		<Box
@@ -56,8 +58,7 @@ export function Flag(props: {
 					sx={{
 						pl: props.slot?.start && 1,
 						height: "100%",
-						backdropFilter:
-							"blur(8vw) brightness(0.8) grayscale(0.3)",
+						backdropFilter: `blur(${(mode == "system" && systemMode == "dark") || mode == "dark" ? 7 : 10}px) brightness(${(mode == "system" && systemMode == "dark") || mode == "dark" ? 0.8 : 1.2}) grayscale(0.1) contrast(0.6)`,
 					}}
 				>
 					{props.slot?.start && (
@@ -74,6 +75,7 @@ export function Flag(props: {
 						sx={{ ...(props.slotProps?.flag ?? {}) }}
 					>
 						<img
+							loading="lazy"
 							height="100%"
 							src={`https://flagcdn.com/${Alpha3ToAlpha2Map[props.region].toLowerCase()}.svg`}
 						/>
