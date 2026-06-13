@@ -54,7 +54,7 @@ export function Flag(props: {
 					container
 					alignItems="center"
 					sx={{
-						pl: 1,
+						pl: props.slot?.start && 1,
 						height: "100%",
 						backdropFilter:
 							"blur(8vw) brightness(0.8) grayscale(0.3)",
@@ -89,6 +89,7 @@ export function Flag(props: {
 							height="100%"
 							sx={{ overflowY: "auto" }}
 							direction={props.oneliner ? "row" : "column"}
+							px={1}
 						>
 							{props.showName && (
 								<Typography

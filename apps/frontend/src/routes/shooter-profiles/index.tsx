@@ -410,7 +410,6 @@ function ShooterProfileListFilterBlock(props: { sx?: SxProps<Theme> }) {
 
 function ShooterProfileList() {
 	const { data: shooters } = Route.useLoaderData();
-	const navigate = Route.useNavigate();
 
 	return (
 		<Card sx={{ flexGrow: 1, p: 1 }}>
