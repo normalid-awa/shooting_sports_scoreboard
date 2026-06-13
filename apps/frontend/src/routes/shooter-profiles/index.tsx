@@ -32,6 +32,11 @@ import { emptyArrayOrValue } from "#/utils";
 import Divider from "@mui/material/Divider";
 import { useResponsiveLayout } from "#/hooks/useResponsiveLayout";
 import { ShooterProfileCard } from "#/components/ShooterProfileCard";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Collapse from "@mui/material/Collapse";
 
 const sortOptions = {
 	name: "Name",
@@ -136,6 +141,7 @@ function ShooterProfileListFilterBlock(props: { sx?: SxProps<Theme> }) {
 	const searchArg = Route.useSearch();
 	const navigate = Route.useNavigate();
 	const debouncedNavigate = useCallback(debounce(navigate, 500), [navigate]);
+	const { data: shooters } = Route.useLoaderData();
 
 	const theme = useTheme();
 	const mobileLayout = useMediaQuery(theme.breakpoints.down("md"));
@@ -171,193 +177,264 @@ function ShooterProfileListFilterBlock(props: { sx?: SxProps<Theme> }) {
 	}, [region, search, sortBy, sortOrder, sports]);
 
 	return (
-		<Grid container spacing={{ xs: 1, md: 2 }} sx={{ ...(props.sx ?? {}) }}>
-			<Grid size={{ xs: 12, sm: "grow" }}>
-				<TextField
-					label="Search"
-					type="search"
-					fullWidth
-					size={sizes}
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-				/>
-			</Grid>
-			<Grid size={{ xs: 12, sm: 8, md: 8, lg: 7 }}>
-				<FormControl fullWidth>
-					<InputLabel size={sizes}>Region</InputLabel>
-					<Select
-						input={<OutlinedInput label="Region" />}
+		<>
+			<Grid
+				container
+				spacing={{ xs: 1, md: 2 }}
+				sx={{ ...(props.sx ?? {}) }}
+			>
+				<Grid size={{ xs: 12, sm: "grow" }}>
+					<TextField
+						label="Search"
+						type="search"
 						fullWidth
 						size={sizes}
-						multiple
-						value={region}
-						onChange={(e) =>
-							setRegion(
-								(typeof e.target.value == "string"
-									? e.target.value.split(",")
-									: e.target.value) as RegionalCode[],
-							)
-						}
-						MenuProps={{
-							slotProps: {
-								paper: {
-									style: {
-										maxHeight: "40vh",
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, sm: 8, md: 8, lg: 7 }}>
+					<FormControl fullWidth>
+						<InputLabel size={sizes}>Region</InputLabel>
+						<Select
+							input={<OutlinedInput label="Region" />}
+							fullWidth
+							size={sizes}
+							multiple
+							value={region}
+							onChange={(e) =>
+								setRegion(
+									(typeof e.target.value == "string"
+										? e.target.value.split(",")
+										: e.target.value) as RegionalCode[],
+								)
+							}
+							MenuProps={{
+								slotProps: {
+									paper: {
+										style: {
+											maxHeight: "40vh",
+										},
 									},
 								},
-							},
-						}}
-						endAdornment={
-							(region?.length ?? 0) > 0 && (
-								<InputAdornment position="end">
-									<IconButton
-										onClick={() => setRegion([])}
-										edge="end"
-										sx={{ mr: 1 }}
+							}}
+							endAdornment={
+								(region?.length ?? 0) > 0 && (
+									<InputAdornment position="end">
+										<IconButton
+											onClick={() => setRegion([])}
+											edge="end"
+											sx={{ mr: 1 }}
+										>
+											<ClearIcon />
+										</IconButton>
+									</InputAdornment>
+								)
+							}
+							renderValue={(selected) => {
+								if (selected.length == 0) return;
+								return (
+									<Stack
+										alignItems="center"
+										direction="row"
+										divider={<span>,</span>}
+										spacing={{ xs: 0.2, sm: 1 }}
+										overflow="auto"
 									>
-										<ClearIcon />
-									</IconButton>
-								</InputAdornment>
-							)
-						}
-						renderValue={(selected) => {
-							if (selected.length == 0) return;
-							return (
-								<Stack
-									direction="row"
-									divider={<span>,</span>}
-									spacing={{ xs: 0.2, sm: 1 }}
-								>
-									{selected.map((v) => (
-										<>
+										{selected.map((v) => (
 											<Flag
 												key={v}
 												region={v}
-												height={10}
+												sx={{
+													height: 20,
+												}}
+												slotProps={{
+													root: {
+														minWidth: "min-content",
+													},
+												}}
 												showCode
 											/>
-										</>
-									))}
-								</Stack>
-							);
-						}}
-					>
-						{RegionalCodes.map((region) => (
-							<MenuItem value={region} key={region} dense={dense}>
-								<Stack
-									direction="row"
-									spacing={1}
-									alignItems="center"
-									display={"inline-flex"}
-								>
-									<Flag region={region} height={10} />
-									{RegionalCodeMap[region]}
-								</Stack>
-							</MenuItem>
-						))}
-					</Select>
-				</FormControl>
-			</Grid>
-			<Grid size={{ xs: 12, sm: 5 }}>
-				<Stack direction="row" spacing={1}>
-					<FormControl fullWidth>
-						<InputLabel size={sizes}>Sort by</InputLabel>
-						<Select
-							input={<OutlinedInput label="Sort by" />}
-							size={sizes}
-							value={sortBy}
-							onChange={(e) =>
-								setSortBy(
-									e.target.value as keyof typeof sortOptions,
-								)
-							}
+										))}
+									</Stack>
+								);
+							}}
 						>
-							{Object.entries(sortOptions).map((sortOption) => (
+							{RegionalCodes.map((region) => (
 								<MenuItem
-									key={sortOption[0]}
-									value={sortOption[0]}
+									value={region}
+									key={region}
 									dense={dense}
 								>
-									{sortOption[1]}
+									<Stack
+										direction="row"
+										spacing={1}
+										alignItems="center"
+										display={"inline-flex"}
+									>
+										<Flag
+											region={region}
+											sx={{
+												height: 25,
+											}}
+											showCode
+											showName
+											oneliner
+											noBorder
+										/>
+									</Stack>
 								</MenuItem>
 							))}
 						</Select>
 					</FormControl>
-					<FormControl fullWidth>
-						<InputLabel size={sizes}>Sort order</InputLabel>
-						<Select
-							input={<OutlinedInput label="Sort order" />}
-							size={sizes}
-							value={sortOrder}
-							onChange={(e) =>
-								setSortOrder(e.target.value as "asc" | "desc")
-							}
-						>
-							<MenuItem value="asc" dense={dense}>
-								Ascending
-							</MenuItem>
-							<MenuItem value="desc" dense={dense}>
-								Descending
-							</MenuItem>
-						</Select>
-					</FormControl>
-				</Stack>
-			</Grid>
-			<Grid size={{ xs: 12, sm: 7 }} alignContent="center">
-				<Stack direction="row" spacing={1} sx={{ overflowX: "auto" }}>
-					<Chip
-						label="All"
-						variant={sports.length == 0 ? "filled" : "outlined"}
-						icon={
-							sports.length == 0 ? <CheckCircleIcon /> : undefined
-						}
-						color={sports.length == 0 ? "primary" : "default"}
-						onClick={() => setSports([])}
-						size={sizes}
-					/>
-					{Sports.map((sport) => {
-						const selected = sports.includes(sport);
-						return (
-							<Chip
-								label={sport}
-								onClick={() =>
-									setSports((prev) =>
-										prev.includes(sport)
-											? prev.filter((s) => s != sport)
-											: [...prev, sport],
+				</Grid>
+				<Grid size={{ xs: 12, sm: 5 }}>
+					<Stack direction="row" spacing={1}>
+						<FormControl fullWidth>
+							<InputLabel size={sizes}>Sort by</InputLabel>
+							<Select
+								input={<OutlinedInput label="Sort by" />}
+								size={sizes}
+								value={sortBy}
+								onChange={(e) =>
+									setSortBy(
+										e.target
+											.value as keyof typeof sortOptions,
 									)
 								}
-								icon={
-									selected ? <CheckCircleIcon /> : undefined
-								}
-								variant={selected ? "filled" : "outlined"}
-								color={selected ? "primary" : "default"}
+							>
+								{Object.entries(sortOptions).map(
+									(sortOption) => (
+										<MenuItem
+											key={sortOption[0]}
+											value={sortOption[0]}
+											dense={dense}
+										>
+											{sortOption[1]}
+										</MenuItem>
+									),
+								)}
+							</Select>
+						</FormControl>
+						<FormControl fullWidth>
+							<InputLabel size={sizes}>Sort order</InputLabel>
+							<Select
+								input={<OutlinedInput label="Sort order" />}
 								size={sizes}
-								key={sport}
-							/>
-						);
-					})}
-				</Stack>
+								value={sortOrder}
+								onChange={(e) =>
+									setSortOrder(
+										e.target.value as "asc" | "desc",
+									)
+								}
+							>
+								<MenuItem value="asc" dense={dense}>
+									Ascending
+								</MenuItem>
+								<MenuItem value="desc" dense={dense}>
+									Descending
+								</MenuItem>
+							</Select>
+						</FormControl>
+					</Stack>
+				</Grid>
+				<Grid size={{ xs: 12, sm: 7 }} alignContent="center">
+					<Stack
+						direction="row"
+						spacing={1}
+						sx={{ overflowX: "auto" }}
+					>
+						<Chip
+							label="All"
+							variant={sports.length == 0 ? "filled" : "outlined"}
+							icon={
+								sports.length == 0 ? (
+									<CheckCircleIcon />
+								) : undefined
+							}
+							color={sports.length == 0 ? "primary" : "default"}
+							onClick={() => setSports([])}
+							size={sizes}
+						/>
+						{Sports.map((sport) => {
+							const selected = sports.includes(sport);
+							return (
+								<Chip
+									label={sport}
+									onClick={() =>
+										setSports((prev) =>
+											prev.includes(sport)
+												? prev.filter((s) => s != sport)
+												: [...prev, sport],
+										)
+									}
+									icon={
+										selected ? (
+											<CheckCircleIcon />
+										) : undefined
+									}
+									variant={selected ? "filled" : "outlined"}
+									color={selected ? "primary" : "default"}
+									size={sizes}
+									key={sport}
+								/>
+							);
+						})}
+					</Stack>
+				</Grid>
 			</Grid>
-		</Grid>
+			<Collapse in={shooters.length == 0}>
+				<Typography
+					textAlign="center"
+					variant="h4"
+					fontSize="3vh"
+					pt={1}
+				>
+					No shooter profiles found. Try{" "}
+					<Button
+						sx={{ fontSize: "inherit" }}
+						onClick={() => {
+							setSearch("");
+							setSports([]);
+							setRegion([]);
+						}}
+					>
+						reset
+					</Button>{" "}
+					the filter to see more shooter profiles.
+				</Typography>
+			</Collapse>
+		</>
 	);
 }
 
 function ShooterProfileList() {
 	const { data: shooters } = Route.useLoaderData();
+	const navigate = Route.useNavigate();
 
 	return (
 		<Card sx={{ flexGrow: 1, p: 1 }}>
-			<Stack spacing={1}>
+			<Grid container spacing={1}>
 				{shooters.map((shooter) => (
-					<ShooterProfileCard
+					<Grid
+						size={{
+							xs: 12 / 1,
+							sm: 12 / 2,
+							lg: 12 / 3,
+							xl: 12 / 4,
+						}}
 						key={shooter.id}
-						identifier={shooter.identifier}
-						region={shooter.region}
-						sport={shooter.sport}
-					/>
+					>
+						<ShooterProfileCard
+							size="small"
+							id={shooter.id}
+							identifier={shooter.identifier}
+							region={shooter.region}
+							sport={shooter.sport}
+						/>
+					</Grid>
 				))}
-			</Stack>
+			</Grid>
 		</Card>
 	);
 }

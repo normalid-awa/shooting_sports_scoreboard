@@ -14,6 +14,7 @@ import {
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import type { SxProps, Theme } from "@mui/material/styles";
+import { Flag } from "./Flag";
 
 export function ModifyShooterProfileForm(props: {
 	onSubmit?: (sport: Sport, region: RegionalCode, identifier: string) => void;
@@ -69,14 +70,11 @@ export function ModifyShooterProfileForm(props: {
 					>
 						{RegionalCodes.map((region) => (
 							<MenuItem key={region} value={region}>
-								<img
-									loading="lazy"
-									width="20"
-									src={`https://flagcdn.com/${Alpha3ToAlpha2Map[region].toLowerCase()}.svg`}
-									alt={`${region}'s flag`}
-									style={{ marginRight: "5px" }}
+								<Flag
+									region={region}
+									sx={{ height: 20 }}
+									showName
 								/>
-								{RegionalCodeMap[region]}
 							</MenuItem>
 						))}
 					</Select>

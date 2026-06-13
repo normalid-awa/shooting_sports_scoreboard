@@ -206,7 +206,11 @@ function ShooterProfileList() {
 							action: (
 								<Card
 									variant="outlined"
-									sx={{ borderRadius: 1e5 }}
+									sx={{
+										background: "unset",
+										borderRadius: 1e5,
+										width: "fit-content",
+									}}
 								>
 									<IconButton
 										onClick={() =>
