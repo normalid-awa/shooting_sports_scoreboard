@@ -6,10 +6,14 @@ import Typography from "@mui/material/Typography";
 import LoginForm from "#/components/LoginForm";
 import Paper from "@mui/material/Paper";
 
-export default function EnsureAuth({ component }: { component: ReactElement }) {
+export default function EnsureAuth({
+	component,
+}: {
+	component: () => ReactElement;
+}) {
 	const { session } = useSuspenseSession();
 
-	if (session?.user) return <>{component}</>;
+	if (session?.user) return <>{component()}</>;
 	else
 		return (
 			<Container

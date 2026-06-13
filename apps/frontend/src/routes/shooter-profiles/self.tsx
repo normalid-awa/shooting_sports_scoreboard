@@ -28,7 +28,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 
 export const Route = createFileRoute("/shooter-profiles/self")({
-	component: () => <EnsureAuth component={<RouteComponent />} />,
+	component: () => <EnsureAuth component={RouteComponent} />,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(getUserShooterProfileQuery());
 	},
