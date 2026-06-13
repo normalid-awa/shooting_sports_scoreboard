@@ -11,7 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, type SxProps, type Theme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
@@ -29,6 +29,9 @@ import { debounce } from "@mui/material/utils";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { listShooterProfilesQuery } from "#/apis/shooterProfile";
 import { emptyArrayOrValue } from "#/utils";
+import Divider from "@mui/material/Divider";
+import { useResponsiveLayout } from "#/hooks/useResponsiveLayout";
+import { ShooterProfileCard } from "#/components/ShooterProfileCard";
 
 const sortOptions = {
 	name: "Name",
@@ -102,15 +105,34 @@ export const Route = createFileRoute("/shooter-profiles/")({
 });
 
 function RouteComponent() {
+	const [, collapsedTopBar] = useResponsiveLayout();
+
 	return (
-		<Stack spacing={2} sx={{ p: 2 }}>
+		<Stack
+			spacing={{ xs: 0, sm: 1 }}
+			divider={<Divider />}
+			sx={{ height: "100%" }}
+		>
 			<TodoPlaceHolder featureName="User's shooter profile" />
+			<Card
+				sx={{
+					pt: { xs: 1, sm: 2 },
+					pb: { xs: 0, sm: 2 },
+					px: { xs: 1, sm: 2 },
+					position: "sticky",
+					top: collapsedTopBar ? 0 : 60,
+					transition: (theme) =>
+						`top ${theme.transitions.easing.easeInOut} ${theme.transitions.duration.standard}ms`,
+				}}
+			>
+				<ShooterProfileListFilterBlock />
+			</Card>
 			<ShooterProfileList />
 		</Stack>
 	);
 }
 
-function ShooterProfileListFilterBlock() {
+function ShooterProfileListFilterBlock(props: { sx?: SxProps<Theme> }) {
 	const searchArg = Route.useSearch();
 	const navigate = Route.useNavigate();
 	const debouncedNavigate = useCallback(debounce(navigate, 500), [navigate]);
@@ -144,11 +166,12 @@ function ShooterProfileListFilterBlock() {
 				sortOrder,
 				sports,
 			},
+			resetScroll: false,
 		});
 	}, [region, search, sortBy, sortOrder, sports]);
 
 	return (
-		<Grid container spacing={{ xs: 1, md: 2 }} sx={{ p: { xs: 1, md: 2 } }}>
+		<Grid container spacing={{ xs: 1, md: 2 }} sx={{ ...(props.sx ?? {}) }}>
 			<Grid size={{ xs: 12, sm: "grow" }}>
 				<TextField
 					label="Search"
@@ -321,12 +344,19 @@ function ShooterProfileListFilterBlock() {
 }
 
 function ShooterProfileList() {
-	const s = Route.useLoaderData();
+	const { data: shooters } = Route.useLoaderData();
+
 	return (
-		<Card>
-			<Stack>
-				<ShooterProfileListFilterBlock />
-				{JSON.stringify(s)}
+		<Card sx={{ flexGrow: 1, p: 1 }}>
+			<Stack spacing={1}>
+				{shooters.map((shooter) => (
+					<ShooterProfileCard
+						key={shooter.id}
+						identifier={shooter.identifier}
+						region={shooter.region}
+						sport={shooter.sport}
+					/>
+				))}
 			</Stack>
 		</Card>
 	);

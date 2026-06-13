@@ -1,10 +1,9 @@
-import { useTheme } from "@mui/material/styles";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useState, type MouseEventHandler } from "react";
 import MobileLayout from "./MobileLayout";
 import DesktopLayout from "./DesktopLayout";
 import { useMatches } from "@tanstack/react-router";
 import UserCardMenu from "./UserCardMenu";
+import { useResponsiveLayout } from "#/hooks/useResponsiveLayout";
 
 export interface LayoutProps {
 	children: React.ReactNode;
@@ -21,9 +20,8 @@ declare module "@tanstack/react-router" {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-	const theme = useTheme();
-	const useMobileLayout = useMediaQuery(theme.breakpoints.down("sm"));
-	const [fold, setFold] = useState(!useMobileLayout);
+	const [mobileLayout] = useResponsiveLayout();
+	const [fold, setFold] = useState(!mobileLayout);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openMenu = Boolean(anchorEl);
 
@@ -44,14 +42,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 				anchorEl={anchorEl}
 				anchorOrigin={{
 					vertical: "bottom",
-					horizontal: useMobileLayout ? "left" : "right",
+					horizontal: mobileLayout ? "left" : "right",
 				}}
 				transformOrigin={{
 					vertical: "top",
-					horizontal: useMobileLayout ? "left" : "right",
+					horizontal: mobileLayout ? "left" : "right",
 				}}
 			/>
-			{useMobileLayout ? (
+			{mobileLayout ? (
 				<MobileLayout
 					fold={fold}
 					setFold={setFold}

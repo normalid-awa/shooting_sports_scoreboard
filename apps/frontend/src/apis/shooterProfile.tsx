@@ -116,5 +116,5 @@ export const listShooterProfilesQuery = (
 	queryOptions({
 		queryKey: ["shooter-profiles", JSON.stringify(arg)],
 		queryFn: async () =>
-			(await client["shooter-profile"]["list"].post(arg)).data,
+			(await client["shooter-profile"]["list"].post(arg)).data!,
 	});
