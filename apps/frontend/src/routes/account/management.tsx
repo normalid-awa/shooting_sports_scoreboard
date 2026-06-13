@@ -36,7 +36,7 @@ import Cropper from "react-easy-crop";
 import { client } from "#/integrations/tanstack-query/api";
 
 export const Route = createFileRoute("/account/management")({
-	component: () => <EnsureAuth component={<RouteComponent />} />,
+	component: () => <EnsureAuth component={RouteComponent} />,
 	head: () => ({
 		meta: [{ title: "Shooting Sports Scoreboard | Account management" }],
 	}),
