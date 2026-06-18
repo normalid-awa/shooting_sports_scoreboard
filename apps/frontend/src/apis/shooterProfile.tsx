@@ -9,17 +9,10 @@ export const createShooterProfileMutation = (
 ) =>
 	mutationOptions({
 		mutationKey: ["create-shooter-profile"],
-		mutationFn: async (data: {
-			sport: Sport;
-			region: RegionalCode;
-			identifier: string;
-		}) => {
-			await client["shooter-profile"].post({
-				identifier: data.identifier,
-				sport: data.sport,
-				region: data.region,
-				name: "",
-			});
+		mutationFn: async (
+			data: Parameters<(typeof client)["shooter-profile"]["post"]>[0],
+		) => {
+			await client["shooter-profile"].post(data);
 		},
 		onSuccess: async (_data, _variable, _result, context) => {
 			await context.client.invalidateQueries({
@@ -50,19 +43,12 @@ export const updateShooterProfileMutation = (
 ) =>
 	mutationOptions({
 		mutationKey: ["update-shooter-profile"],
-		mutationFn: async (data: {
-			id: string;
-			sport: Sport;
-			region: RegionalCode;
-			identifier: string;
-			name: string;
-		}) => {
-			await client["shooter-profile"]({ id: data.id }).put({
-				identifier: data.identifier,
-				sport: data.sport,
-				region: data.region,
-				name: data.name,
-			});
+		mutationFn: async (
+			data: Parameters<
+				ReturnType<(typeof client)["shooter-profile"]>["put"]
+			>[0] & { id: string },
+		) => {
+			await client["shooter-profile"]({ id: data.id }).put(data);
 		},
 		onSuccess: async (_data, _variable, _result, context) => {
 			await context.client.invalidateQueries({

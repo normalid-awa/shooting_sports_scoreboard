@@ -52,7 +52,12 @@ export function ShooterProfileCard(props: {
 						</Typography>
 					),
 					end: (
-						<Stack direction="row" spacing={1} alignItems="center">
+						<Stack
+							direction="row"
+							spacing={1}
+							alignItems="center"
+							justifyContent="space-between"
+						>
 							<Typography variant="subtitle1">
 								Identifier: {identifier}
 							</Typography>

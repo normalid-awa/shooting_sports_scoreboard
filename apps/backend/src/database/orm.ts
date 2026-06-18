@@ -4,3 +4,5 @@ import config from "../mikro-orm.config.js";
 export default function orm() {
 	return new MikroORM(config);
 }
+
+export type EMType = ReturnType<typeof orm>["em"];

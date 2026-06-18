@@ -119,7 +119,10 @@ export function Flag(props: {
 					{props.slot?.end && (
 						<Grid size={isSmall ? 12 : "grow"}>
 							<Box
-								sx={{ justifySelf: isSmall ? "start" : "end" }}
+								sx={{
+									justifySelf: isSmall ? "start" : "end",
+									width: isSmall ? "100%" : undefined,
+								}}
 							>
 								<>{props.slot.end}</>
 							</Box>

@@ -26,6 +26,7 @@ import { RegionalCodeMap } from "@shooting_sports_scoreboard/common";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export const Route = createFileRoute("/shooter-profiles/self")({
 	component: () => <EnsureAuth component={RouteComponent} />,
@@ -87,11 +88,20 @@ function RouteComponent() {
 						<Card variant="outlined" sx={{ p: 2 }}>
 							<ModifyShooterProfileForm
 								submitting={createShooterProfile.isPending}
-								onSubmit={async (sport, region, identifier) => {
+								onSubmit={async (
+									sport,
+									region,
+									identifier,
+									divisions,
+									dcs,
+								) => {
 									await createShooterProfile.mutateAsync({
 										sport,
 										region,
 										identifier,
+										name: "",
+										divisions,
+										divisionsClassifications: dcs,
 									});
 									setShowCreateShooterProfileModal(false);
 								}}
@@ -117,6 +127,7 @@ function ShooterProfileList() {
 	const updateShooterProfileMutationFn = useMutation(
 		updateShooterProfileMutation(confirm),
 	);
+	const mobileVersion = useMediaQuery((t) => t.breakpoints.down("sm"));
 
 	const deleteShooterProfile = (id: string) => async () => {
 		const shooterProfile = shooterProfiles?.find(
@@ -171,8 +182,23 @@ function ShooterProfileList() {
 									shooterProfiles![
 										editingShooterProfileIndex!
 									].identifier,
+								divisions:
+									shooterProfiles![
+										editingShooterProfileIndex!
+									].sportSpecificData?.divisions,
+								divisionsClassifications:
+									shooterProfiles![
+										editingShooterProfileIndex!
+									].sportSpecificData
+										?.divisionsClassifications,
 							}}
-							onSubmit={(sport, region, identifier) => {
+							onSubmit={(
+								sport,
+								region,
+								identifier,
+								divisions,
+								dcs,
+							) => {
 								updateShooterProfileMutationFn.mutateAsync(
 									{
 										id: shooterProfiles![
@@ -181,9 +207,9 @@ function ShooterProfileList() {
 										sport,
 										region,
 										identifier,
-										name: shooterProfiles![
-											editingShooterProfileIndex!
-										].name,
+										name: "",
+										divisions,
+										divisionsClassifications: dcs,
 									},
 									{
 										onSuccess: () =>
@@ -202,6 +228,7 @@ function ShooterProfileList() {
 					<ShooterProfileCard
 						key={shooterProfile.id}
 						{...shooterProfile}
+						size={mobileVersion ? "small" : "medium"}
 						slots={{
 							action: (
 								<Card

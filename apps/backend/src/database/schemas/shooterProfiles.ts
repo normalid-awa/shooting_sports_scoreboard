@@ -12,7 +12,6 @@ import {
 	PrimaryKey,
 	Property,
 } from "@mikro-orm/decorators/es";
-import { Opt } from "@mikro-orm/core";
 
 @Entity()
 export class ShooterProfile {
@@ -22,10 +21,10 @@ export class ShooterProfile {
 	@Property()
 	name!: string;
 
-	@Enum(() => Sports)
+	@Enum({ items: () => Sports, nativeEnumName: "sport" })
 	sport!: Sport;
 
-	@Enum(() => RegionalCodes)
+	@Enum({ items: () => RegionalCodes, nativeEnumName: "region" })
 	region!: RegionalCode;
 
 	@Property()
@@ -34,6 +33,12 @@ export class ShooterProfile {
 	@ManyToOne()
 	user!: User;
 
+	@Property({ type: "jsonb" })
+	sportSpecificData?: {
+		divisions?: string[];
+		divisionsClassifications?: Record<string, string>;
+	};
+
 	@Property({ onCreate: () => new Date(), defaultRaw: "current_timestamp" })
-	createdAt: Opt<Date> = new Date();
+	createdAt: Date = new Date();
 }
